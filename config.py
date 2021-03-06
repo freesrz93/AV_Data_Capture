@@ -16,6 +16,7 @@ class Config:
             with open(path, 'w', encoding='utf-8') as f:
                 self.conf.write(f)
             print("[-]Generate config.ini successfully!")
+            input("Press enter key exit, you can check the error message before you exit...")
             exit(0)
 
     def main_mode(self) -> str:
@@ -173,7 +174,7 @@ class Config:
 
         sec3 = "Name_Rule"
         conf.add_section(sec3)
-        conf.set(sec3, "location_rule", "actor + '/' + number")
+        conf.set(sec3, "location_rule", "number")
         conf.set(sec3, "naming_rule", "number + '-' + title")
         conf.set(sec3, "max_title_len", "50")
 
@@ -188,7 +189,7 @@ class Config:
         sec6 = "escape"
         conf.add_section(sec6)
         conf.set(sec6, "literals", "\()/")  # noqa
-        conf.set(sec6, "folders", "failed, JAV_output")
+        conf.set(sec6, "folders", "下载中, JAV_output")
 
         sec7 = "debug_mode"
         conf.add_section(sec7)
