@@ -3,7 +3,7 @@ import os
 
 
 class Config:
-    def __init__(self, path: str = "config.ini"):
+    def __init__(self, path: str = "config.ini"):  # srz 修改：加入自动生成配置文件功能
         if os.path.exists(path):
             self.conf = configparser.ConfigParser()
             try:
@@ -11,16 +11,12 @@ class Config:
             except:
                 self.conf.read(path, encoding="utf-8")
         else:
-            try:
-                self.conf = configparser.ConfigParser()
-                try:  # From single crawler debug use only
-                    self.conf.read('../' + path, encoding="utf-8-sig")
-                except:
-                    self.conf.read('../' + path, encoding="utf-8")
-            except Exception as e:
-                print("[-]Config file not found! Use the default settings")
-                print("[-]", e)
-                self.conf = self._default_config()
+            self.conf = self._default_config()
+            print("[-]Config file not found! Generate default file...")
+            with open(path, 'w', encoding='utf-8') as f:
+                self.conf.write(f)
+            print("[-]Generate config.ini successfully!")
+            exit(0)
 
     def main_mode(self) -> str:
         try:
@@ -81,8 +77,6 @@ class Config:
     def get_transalte_engine(self) -> str:
         return self.conf.get("transalte", "engine")
 
-    # def get_transalte_appId(self) ->str:
-    #     return self.conf.get("transalte","appid")
     def get_transalte_key(self) -> str:
         return self.conf.get("transalte", "key")
 
@@ -104,8 +98,10 @@ class Config:
         except ValueError:
             self._exit("common")
 
-    def cacert_file(self) -> str:
-        return self.conf.get('proxy', 'cacert_file')
+    def cacert_file(self) -> [str, bool]:  # srz 修改：防止不设置时出现警告
+        if self.conf.get('proxy', 'cacert_file'):
+            return self.conf.get('proxy', 'cacert_file')
+        return True
 
     def media_type(self) -> str:
         return self.conf.get('media', 'media_type')
@@ -166,12 +162,13 @@ class Config:
         conf.set(sec1, "auto_exit", "0")
         conf.set(sec1, "transalte_to_sc", "1")
 
-        sec2 = "proxy"
+        sec2 = "proxy"  # srz 修改：原作者漏项了
         conf.add_section(sec2)
-        conf.set(sec2, "proxy", "")
-        conf.set(sec2, "timeout", "5")
+        conf.set(sec2, "switch", "1")
+        conf.set(sec2, "type", "http")
+        conf.set(sec2, "proxy", "127.0.0.1:7890")
+        conf.set(sec2, "timeout", "10")
         conf.set(sec2, "retry", "3")
-        conf.set(sec2, "type", "socks5")
         conf.set(sec2, "cacert_file", "")
 
         sec3 = "Name_Rule"
@@ -199,7 +196,7 @@ class Config:
 
         sec8 = "transalte"
         conf.add_section(sec8)
-        conf.set(sec8, "switch", "0")
+        conf.set(sec8, "switch", "1")
         conf.set(sec8, "engine", "google-free")
         # conf.set(sec8, "appid", "")
         conf.set(sec8, "key", "")
@@ -223,12 +220,12 @@ class Config:
 
         sec12 = "watermark"
         conf.add_section(sec12)
-        conf.set(sec12, "switch", 1)
-        conf.set(sec12, "water", 2)
+        conf.set(sec12, "switch", '1')
+        conf.set(sec12, "water", '2')
 
         sec13 = "extrafanart"
         conf.add_section(sec13)
-        conf.set(sec13, "switch", 1)
+        conf.set(sec13, "switch", '1')
         conf.set(sec13, "extrafanart_folder", "extrafanart")
 
         return conf
@@ -252,7 +249,6 @@ if __name__ == "__main__":
     print(config.debug())
     print(config.is_transalte())
     print(config.get_transalte_engine())
-    # print(config.get_transalte_appId())
     print(config.get_transalte_key())
     print(config.get_transalte_delay())
     print(config.transalte_values())
