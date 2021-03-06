@@ -360,16 +360,16 @@ def download_file_with_filename(url, filename, path, conf: config.Config, filepa
                 with open(str(path) + "/" + filename, "wb") as code:
                     code.write(r.content)
                 return
-        except requests.exceptions.RequestException:
+        except requests.exceptions.ConnectTimeout:
             i += 1
-            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(retry_count))
-        except requests.exceptions.ConnectionError:
-            i += 1
-            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(retry_count))
+            print('[-]Image Download :  Timeout retry ' + str(i) + '/' + str(retry_count))
         except requests.exceptions.ProxyError:
             i += 1
-            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(retry_count))
-        except requests.exceptions.ConnectTimeout:
+            print('[-]Image Download :  PROXY error retry ' + str(i) + '/' + str(retry_count))
+        except requests.exceptions.ConnectionError:
+            i += 1
+            print('[-]Image Download :  Can\'t connect retry ' + str(i) + '/' + str(retry_count))
+        except requests.exceptions.RequestException:
             i += 1
             print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(retry_count))
     print('[-]Connect Failed! Please check your Proxy or Network!')
@@ -467,7 +467,7 @@ def print_files(path, c_word, naming_rule, part, cn_sub, json_data, filepath, fa
                     print("   <name>" + key + "</name>", file=code)
                     print("  </actor>", file=code)
             except:
-                aaaa = ''
+                pass
             print("  <maker>" + studio + "</maker>", file=code)
             print("  <label>" + label + "</label>", file=code)
             if cn_sub == '1':
@@ -479,12 +479,12 @@ def print_files(path, c_word, naming_rule, part, cn_sub, json_data, filepath, fa
                     print("  <tag>" + i + "</tag>", file=code)
                 print("  <tag>" + series + "</tag>", file=code)
             except:
-                aaaaa = ''
+                pass
             try:
                 for i in tag:
                     print("  <genre>" + i + "</genre>", file=code)
             except:
-                aaaaaaaa = ''
+                pass
             if cn_sub == '1':
                 print("  <genre>中文字幕</genre>", file=code)
             print("  <num>" + number + "</num>", file=code)
