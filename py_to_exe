@@ -1,0 +1,3 @@
+pyinstaller -F AV_Data_Capture.py
+del AV_Data_Capture.spec
+del build
