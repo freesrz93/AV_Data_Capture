@@ -1,27 +1,23 @@
-import json
 import os.path
 import pathlib
-import re
 import shutil
-import platform
-
-from PIL import Image
 from io import BytesIO
 
-from ADC_function import *
+from PIL import Image
 
+from ADC_function import *
 # =========website========
 from WebCrawler import airav
 from WebCrawler import avsox
+from WebCrawler import dlsite
 from WebCrawler import fanza
 from WebCrawler import fc2
 from WebCrawler import jav321
 from WebCrawler import javbus
 from WebCrawler import javdb
+from WebCrawler import javlib
 from WebCrawler import mgstage
 from WebCrawler import xcity
-from WebCrawler import javlib
-from WebCrawler import dlsite
 
 
 def escape_path(path, escape_literals: str):  # Remove escape literals
@@ -70,16 +66,16 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
     # if the input file name matches certain rules,
     # move some web service to the beginning of the list
     if "avsox" in sources and (re.match(r"^\d{5,}", file_number) or
-        "HEYZO" in file_number or "heyzo" in file_number or "Heyzo" in file_number
+                               "HEYZO" in file_number or "heyzo" in file_number or "Heyzo" in file_number
     ):
         # if conf.debug() == True:
         #     print('[+]select avsox')
         sources.insert(0, sources.pop(sources.index("avsox")))
     elif "mgstage" in sources and (re.match(r"\d+\D+", file_number) or
-        "siro" in file_number or "SIRO" in file_number or "Siro" in file_number
+                                   "siro" in file_number or "SIRO" in file_number or "Siro" in file_number
     ):
         # if conf.debug() == True:
-            # print('[+]select fanza')
+        # print('[+]select fanza')
         sources.insert(0, sources.pop(sources.index("mgstage")))
     elif "fc2" in sources and ("fc2" in file_number or "FC2" in file_number
     ):
@@ -87,7 +83,7 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
         #     print('[+]select fc2')
         sources.insert(0, sources.pop(sources.index("fc2")))
     elif "dlsite" in sources and (
-        "RJ" in file_number or "rj" in file_number or "VJ" in file_number or "vj" in file_number
+            "RJ" in file_number or "rj" in file_number or "VJ" in file_number or "vj" in file_number
     ):
         # if conf.debug() == True:
         #     print('[+]select dlsite')
@@ -97,7 +93,7 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
     for source in sources:
         try:
             if conf.debug() == True:
-                print('[+]select',source)
+                print('[+]select', source)
             json_data = json.loads(func_mapping[source](file_number))
             # if any service return a valid return, break
             if get_data_state(json_data):
@@ -130,17 +126,17 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
         cover_small = ''
     else:
         cover_small = json_data.get('cover_small')
-    
+
     if json_data.get('trailer') == None:
         trailer = ''
     else:
         trailer = json_data.get('trailer')
-        
+
     if json_data.get('extrafanart') == None:
         extrafanart = ''
     else:
         extrafanart = json_data.get('extrafanart')
-    
+
     imagecut = json_data.get('imagecut')
     tag = str(json_data.get('tag')).strip("[ ]").replace("'", '').replace(" ", '').split(',')  # 字符串转列表 @
     actor = str(actor_list).strip("[ ]").replace("'", '').replace(" ", '')
@@ -171,47 +167,47 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
     # ====================处理异常字符 END================== #\/:*?"<>|
 
     # ===  替换Studio片假名
-    studio = studio.replace('アイエナジー','Energy')
-    studio = studio.replace('アイデアポケット','Idea Pocket')
-    studio = studio.replace('アキノリ','AKNR')
-    studio = studio.replace('アタッカーズ','Attackers')
-    studio = re.sub('アパッチ.*','Apache',studio)
-    studio = studio.replace('アマチュアインディーズ','SOD')
-    studio = studio.replace('アリスJAPAN','Alice Japan')
-    studio = studio.replace('オーロラプロジェクト・アネックス','Aurora Project Annex')
-    studio = studio.replace('クリスタル映像','Crystal 映像')
-    studio = studio.replace('グローリークエスト','Glory Quest')
-    studio = studio.replace('ダスッ！','DAS！')
-    studio = studio.replace('ディープス','DEEP’s')
-    studio = studio.replace('ドグマ','Dogma')
-    studio = studio.replace('プレステージ','PRESTIGE')
-    studio = studio.replace('ムーディーズ','MOODYZ')
-    studio = studio.replace('メディアステーション','宇宙企画')
-    studio = studio.replace('ワンズファクトリー','WANZ FACTORY')
-    studio = studio.replace('エスワン ナンバーワンスタイル','S1')
-    studio = studio.replace('エスワンナンバーワンスタイル','S1')
-    studio = studio.replace('SODクリエイト','SOD')
-    studio = studio.replace('サディスティックヴィレッジ','SOD')
-    studio = studio.replace('V＆Rプロダクツ','V＆R PRODUCE')
-    studio = studio.replace('V＆RPRODUCE','V＆R PRODUCE')
-    studio = studio.replace('レアルワークス','Real Works')
-    studio = studio.replace('マックスエー','MAX-A')
-    studio = studio.replace('ピーターズMAX','PETERS MAX')
-    studio = studio.replace('プレミアム','PREMIUM')
-    studio = studio.replace('ナチュラルハイ','NATURAL HIGH')
-    studio = studio.replace('マキシング','MAXING')
-    studio = studio.replace('エムズビデオグループ','M’s Video Group')
-    studio = studio.replace('ミニマム','Minimum')
-    studio = studio.replace('ワープエンタテインメント','WAAP Entertainment')
-    studio = re.sub('.*/妄想族','妄想族',studio)
-    studio = studio.replace('/',' ')
+    studio = studio.replace('アイエナジー', 'Energy')
+    studio = studio.replace('アイデアポケット', 'Idea Pocket')
+    studio = studio.replace('アキノリ', 'AKNR')
+    studio = studio.replace('アタッカーズ', 'Attackers')
+    studio = re.sub('アパッチ.*', 'Apache', studio)
+    studio = studio.replace('アマチュアインディーズ', 'SOD')
+    studio = studio.replace('アリスJAPAN', 'Alice Japan')
+    studio = studio.replace('オーロラプロジェクト・アネックス', 'Aurora Project Annex')
+    studio = studio.replace('クリスタル映像', 'Crystal 映像')
+    studio = studio.replace('グローリークエスト', 'Glory Quest')
+    studio = studio.replace('ダスッ！', 'DAS！')
+    studio = studio.replace('ディープス', 'DEEP’s')
+    studio = studio.replace('ドグマ', 'Dogma')
+    studio = studio.replace('プレステージ', 'PRESTIGE')
+    studio = studio.replace('ムーディーズ', 'MOODYZ')
+    studio = studio.replace('メディアステーション', '宇宙企画')
+    studio = studio.replace('ワンズファクトリー', 'WANZ FACTORY')
+    studio = studio.replace('エスワン ナンバーワンスタイル', 'S1')
+    studio = studio.replace('エスワンナンバーワンスタイル', 'S1')
+    studio = studio.replace('SODクリエイト', 'SOD')
+    studio = studio.replace('サディスティックヴィレッジ', 'SOD')
+    studio = studio.replace('V＆Rプロダクツ', 'V＆R PRODUCE')
+    studio = studio.replace('V＆RPRODUCE', 'V＆R PRODUCE')
+    studio = studio.replace('レアルワークス', 'Real Works')
+    studio = studio.replace('マックスエー', 'MAX-A')
+    studio = studio.replace('ピーターズMAX', 'PETERS MAX')
+    studio = studio.replace('プレミアム', 'PREMIUM')
+    studio = studio.replace('ナチュラルハイ', 'NATURAL HIGH')
+    studio = studio.replace('マキシング', 'MAXING')
+    studio = studio.replace('エムズビデオグループ', 'M’s Video Group')
+    studio = studio.replace('ミニマム', 'Minimum')
+    studio = studio.replace('ワープエンタテインメント', 'WAAP Entertainment')
+    studio = re.sub('.*/妄想族', '妄想族', studio)
+    studio = studio.replace('/', ' ')
     # ===  替换Studio片假名 END
-    
+
     location_rule = eval(conf.location_rule())
 
     if 'actor' in conf.location_rule() and len(actor) > 100:
         print(conf.location_rule())
-        location_rule = eval(conf.location_rule().replace("actor","'多人作品'"))
+        location_rule = eval(conf.location_rule().replace("actor", "'多人作品'"))
     maxlen = conf.max_title_len()
     if 'title' in conf.location_rule() and len(title) > maxlen:
         shorttitle = title[0:maxlen]
@@ -257,7 +253,7 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
             json_data['trailer'] = ''
     else:
         json_data['trailer'] = ''
-        
+
     if conf.is_extrafanart():
         if extrafanart:
             json_data['extrafanart'] = extrafanart
@@ -265,8 +261,8 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
             json_data['extrafanart'] = ''
     else:
         json_data['extrafanart'] = ''
-        
-    naming_rule=""
+
+    naming_rule = ""
     for i in conf.naming_rule().split("+"):
         if i not in json_data:
             naming_rule += i.strip("'").strip('"')
@@ -300,9 +296,12 @@ def small_cover_check(path, number, cover_small, c_word, conf: config.Config, fi
 
 
 def create_folder(success_folder, location_rule, json_data, conf: config.Config):  # 创建文件夹
-    title, studio, year, outline, runtime, director, actor_photo, release, number, cover, trailer, website, series, label = get_info(json_data)
+    title, studio, year, outline, runtime, director, actor_photo, release, number, cover, trailer, website, series, label = get_info(
+        json_data)
     if len(location_rule) > 240:  # 新建成功输出文件夹
-        path = success_folder + '/' + location_rule.replace("'actor'", "'manypeople'", 3).replace("actor","'manypeople'",3)  # path为影片+元数据所在目录
+        path = success_folder + '/' + location_rule.replace("'actor'", "'manypeople'", 3).replace("actor",
+                                                                                                  "'manypeople'",
+                                                                                                  3)  # path为影片+元数据所在目录
     else:
         path = success_folder + '/' + location_rule
     path = trimblank(path)
@@ -327,6 +326,7 @@ def trimblank(s: str):
     else:
         return s
 
+
 # =====================资源下载部分===========================
 
 # path = examle:photo , video.in the Project Folder!
@@ -344,7 +344,7 @@ def download_file_with_filename(url, filename, path, conf: config.Config, filepa
                 r = requests.get(url, headers=headers, timeout=timeout, proxies=proxies)
                 if r == '':
                     print('[-]Movie Data not found!')
-                    return 
+                    return
                 with open(str(path) + "/" + filename, "wb") as code:
                     code.write(r.content)
                 return
@@ -356,7 +356,7 @@ def download_file_with_filename(url, filename, path, conf: config.Config, filepa
                 r = requests.get(url, timeout=timeout, headers=headers)
                 if r == '':
                     print('[-]Movie Data not found!')
-                    return 
+                    return
                 with open(str(path) + "/" + filename, "wb") as code:
                     code.write(r.content)
                 return
@@ -376,12 +376,14 @@ def download_file_with_filename(url, filename, path, conf: config.Config, filepa
     moveFailedFolder(filepath, failed_folder)
     return
 
+
 def trailer_download(trailer, c_word, number, path, filepath, conf: config.Config, failed_folder):
-    if download_file_with_filename(trailer, number + c_word + '-trailer.mp4', path, conf, filepath, failed_folder) == 'failed':
+    if download_file_with_filename(trailer, number + c_word + '-trailer.mp4', path, conf, filepath,
+                                   failed_folder) == 'failed':
         return
     switch, _proxy, _timeout, retry, _proxytype = conf.proxy()
     for i in range(retry):
-        if os.path.getsize(path+'/' + number + c_word + '-trailer.mp4') == 0:
+        if os.path.getsize(path + '/' + number + c_word + '-trailer.mp4') == 0:
             print('[!]Video Download Failed! Trying again. [{}/3]', i + 1)
             download_file_with_filename(trailer, number + c_word + '-trailer.mp4', path, conf, filepath, failed_folder)
             continue
@@ -391,19 +393,21 @@ def trailer_download(trailer, c_word, number, path, filepath, conf: config.Confi
         return
     print('[+]Video Downloaded!', path + '/' + number + c_word + '-trailer.mp4')
 
+
 # 剧照下载成功，否则移动到failed
 def extrafanart_download(data, path, conf: config.Config, filepath, failed_folder):
     j = 1
     path = path + '/' + conf.get_extrafanart()
     for url in data:
-        if download_file_with_filename(url, '/extrafanart-' + str(j)+'.jpg', path, conf, filepath, failed_folder) == 'failed':
+        if download_file_with_filename(url, '/extrafanart-' + str(j) + '.jpg', path, conf, filepath,
+                                       failed_folder) == 'failed':
             moveFailedFolder(filepath, failed_folder)
             return
         switch, _proxy, _timeout, retry, _proxytype = conf.proxy()
         for i in range(retry):
             if os.path.getsize(path + '/extrafanart-' + str(j) + '.jpg') == 0:
                 print('[!]Image Download Failed! Trying again. [{}/3]', i + 1)
-                download_file_with_filename(url, '/extrafanart-' + str(j)+'.jpg', path, conf, filepath,
+                download_file_with_filename(url, '/extrafanart-' + str(j) + '.jpg', path, conf, filepath,
                                             failed_folder)
                 continue
             else:
@@ -414,10 +418,10 @@ def extrafanart_download(data, path, conf: config.Config, filepath, failed_folde
         j += 1
 
 
-
 # 封面是否下载成功，否则移动到failed
 def image_download(cover, number, c_word, path, conf: config.Config, filepath, failed_folder):
-    if download_file_with_filename(cover, number + c_word + '-fanart.jpg', path, conf, filepath, failed_folder) == 'failed':
+    if download_file_with_filename(cover, number + c_word + '-fanart.jpg', path, conf, filepath,
+                                   failed_folder) == 'failed':
         moveFailedFolder(filepath, failed_folder)
         return
 
@@ -432,11 +436,12 @@ def image_download(cover, number, c_word, path, conf: config.Config, filepath, f
     if os.path.getsize(path + '/' + number + c_word + '-fanart.jpg') == 0:
         return
     print('[+]Image Downloaded!', path + '/' + number + c_word + '-fanart.jpg')
-    shutil.copyfile(path + '/' + number + c_word + '-fanart.jpg',path + '/' + number + c_word + '-thumb.jpg')
+    shutil.copyfile(path + '/' + number + c_word + '-fanart.jpg', path + '/' + number + c_word + '-thumb.jpg')
 
 
 def print_files(path, c_word, naming_rule, part, cn_sub, json_data, filepath, failed_folder, tag, actor_list, liuchu):
-    title, studio, year, outline, runtime, director, actor_photo, release, number, cover, trailer, website, series, label = get_info(json_data)
+    title, studio, year, outline, runtime, director, actor_photo, release, number, cover, trailer, website, series, label = get_info(
+        json_data)
 
     try:
         if not os.path.exists(path):
@@ -503,7 +508,7 @@ def print_files(path, c_word, naming_rule, part, cn_sub, json_data, filepath, fa
 
 
 def cutImage(imagecut, path, number, c_word):
-    if imagecut == 1: # 剪裁大封面
+    if imagecut == 1:  # 剪裁大封面
         try:
             img = Image.open(path + '/' + number + c_word + '-fanart.jpg')
             imgSize = img.size
@@ -514,9 +519,10 @@ def cutImage(imagecut, path, number, c_word):
             print('[+]Image Cutted!     ' + path + '/' + number + c_word + '-poster.jpg')
         except:
             print('[-]Cover cut failed!')
-    elif imagecut == 0: # 复制封面
-        shutil.copyfile(path + '/' + number + c_word + '-fanart.jpg',path + '/' + number + c_word + '-poster.jpg')
+    elif imagecut == 0:  # 复制封面
+        shutil.copyfile(path + '/' + number + c_word + '-fanart.jpg', path + '/' + number + c_word + '-poster.jpg')
         print('[+]Image Copyed!     ' + path + '/' + number + c_word + '-poster.jpg')
+
 
 # 此函数从gui版copy过来用用
 # 参数说明
@@ -526,7 +532,7 @@ def cutImage(imagecut, path, number, c_word):
 # leak     流出     参数值为 1   0
 # uncensored 无码   参数值为 1   0
 # ========================================================================加水印
-def add_mark(poster_path, thumb_path, cn_sub, leak, uncensored, conf:config.Config):
+def add_mark(poster_path, thumb_path, cn_sub, leak, uncensored, conf: config.Config):
     mark_type = ''
     if cn_sub:
         mark_type += ',字幕'
@@ -540,6 +546,7 @@ def add_mark(poster_path, thumb_path, cn_sub, leak, uncensored, conf:config.Conf
     print('[+]Thumb Add Mark:   ' + mark_type.strip(','))
     add_mark_thread(poster_path, cn_sub, leak, uncensored, conf)
     print('[+]Poster Add Mark:  ' + mark_type.strip(','))
+
 
 def add_mark_thread(pic_path, cn_sub, leak, uncensored, conf):
     size = 14
@@ -557,14 +564,21 @@ def add_mark_thread(pic_path, cn_sub, leak, uncensored, conf):
         add_to_pic(pic_path, img_pic, size, count, 3)
     img_pic.close()
 
+
 def add_to_pic(pic_path, img_pic, size, count, mode):
     mark_pic_path = ''
     if mode == 1:
-        mark_pic_path = BytesIO(get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/SUB.png",return_type="content"))
+        mark_pic_path = BytesIO(
+            get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/SUB.png",
+                     return_type="content"))
     elif mode == 2:
-        mark_pic_path = BytesIO(get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/LEAK.png",return_type="content"))
+        mark_pic_path = BytesIO(
+            get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/LEAK.png",
+                     return_type="content"))
     elif mode == 3:
-        mark_pic_path = BytesIO(get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/UNCENSORED.png",return_type="content"))
+        mark_pic_path = BytesIO(
+            get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/UNCENSORED.png",
+                     return_type="content"))
     img_subt = Image.open(mark_pic_path)
     scroll_high = int(img_pic.height / size)
     scroll_wide = int(scroll_high * img_subt.width / img_subt.height)
@@ -579,10 +593,12 @@ def add_to_pic(pic_path, img_pic, size, count, mode):
     ]
     img_pic.paste(img_subt, (pos[count]['x'], pos[count]['y']), mask=a)
     img_pic.save(pic_path, quality=95)
+
+
 # ========================结束=================================
 
 def paste_file_to_folder(filepath, path, number, c_word, conf: config.Config):  # 文件路径，番号，后缀，要移动至的位置
-    houzhui = os.path.splitext(filepath)[1].replace(",","")
+    houzhui = os.path.splitext(filepath)[1].replace(",", "")
     file_parent_origin_path = str(pathlib.Path(filepath).parent)
     try:
         # 如果soft_link=1 使用软链接
@@ -591,33 +607,33 @@ def paste_file_to_folder(filepath, path, number, c_word, conf: config.Config):  
         else:
             os.rename(filepath, path + '/' + number + c_word + houzhui)
         sub_res = conf.sub_rule()
-        
+
         for subname in sub_res:
             if os.path.exists(number + c_word + subname):  # 字幕移动
                 os.rename(number + c_word + subname, path + '/' + number + c_word + subname)
                 print('[+]Sub moved!')
                 return True
-        
+
     except FileExistsError:
         print('[-]File Exists! Please check your movie!')
         print('[-]move to the root folder of the program.')
-        return 
+        return
     except PermissionError:
         print('[-]Error! Please run as administrator!')
-        return 
+        return
 
 
 def paste_file_to_folder_mode2(filepath, path, multi_part, number, part, c_word, conf):  # 文件路径，番号，后缀，要移动至的位置
     if multi_part == 1:
         number += part  # 这时number会被附加上CD1后缀
-    houzhui = os.path.splitext(filepath)[1].replace(",","")
+    houzhui = os.path.splitext(filepath)[1].replace(",", "")
     file_parent_origin_path = str(pathlib.Path(filepath).parent)
     try:
         if conf.soft_link():
             os.symlink(filepath, path + '/' + number + part + c_word + houzhui)
         else:
             os.rename(filepath, path + '/' + number + part + c_word + houzhui)
-        
+
         sub_res = conf.sub_rule()
         for subname in sub_res:
             if os.path.exists(os.getcwd() + '/' + number + c_word + subname):  # 字幕移动
@@ -628,10 +644,11 @@ def paste_file_to_folder_mode2(filepath, path, multi_part, number, part, c_word,
     except FileExistsError:
         print('[-]File Exists! Please check your movie!')
         print('[-]move to the root folder of the program.')
-        return 
+        return
     except PermissionError:
         print('[-]Error! Please run as administrator!')
         return
+
 
 def get_part(filepath, failed_folder):
     try:
@@ -669,10 +686,9 @@ def core_main(file_path, number_th, conf: config.Config):
     cn_sub = ''
     liuchu = ''
 
-
     filepath = file_path  # 影片的路径 绝对路径
     # 下面被注释的变量不需要
-    #rootpath= os.getcwd
+    # rootpath= os.getcwd
     number = number_th
     json_data = get_data_from_json(number, filepath, conf)  # 定义番号
 
@@ -687,8 +703,8 @@ def core_main(file_path, number_th, conf: config.Config):
         # but paste_file_to_folder() still use the input raw search id
         # so the solution is: use the normalized search id
         number = json_data["number"]
-    imagecut =  json_data.get('imagecut')
-    tag =  json_data.get('tag')
+    imagecut = json_data.get('imagecut')
+    tag = json_data.get('tag')
     # =======================================================================判断-C,-CD后缀
     if '-CD' in filepath or '-cd' in filepath:
         multi_part = 1
@@ -696,14 +712,13 @@ def core_main(file_path, number_th, conf: config.Config):
     if '-c.' in filepath or '-C.' in filepath or '中文' in filepath or '字幕' in filepath:
         cn_sub = '1'
         c_word = '-C'  # 中文字幕影片后缀
-    
+
     # 判断是否无码
     if is_uncensored(number):
         uncensored = 1
     else:
         uncensored = 0
-    
-    
+
     if '流出' in filepath:
         liuchu = '流出'
         leak = 1
@@ -715,7 +730,7 @@ def core_main(file_path, number_th, conf: config.Config):
         debug_print(json_data)
 
     # 创建文件夹
-    #path = create_folder(rootpath + '/' + conf.success_folder(),  json_data.get('location_rule'), json_data, conf)
+    # path = create_folder(rootpath + '/' + conf.success_folder(),  json_data.get('location_rule'), json_data, conf)
 
     # main_mode
     #  1: 刮削模式 / Scraping mode
@@ -723,23 +738,23 @@ def core_main(file_path, number_th, conf: config.Config):
     #  3：不改变路径刮削 
     if conf.main_mode() == 1:
         # 创建文件夹
-        path = create_folder(conf.success_folder(),  json_data.get('location_rule'), json_data, conf)
+        path = create_folder(conf.success_folder(), json_data.get('location_rule'), json_data, conf)
         if multi_part == 1:
             number += part  # 这时number会被附加上CD1后缀
 
         # 检查小封面, 如果image cut为3，则下载小封面
         if imagecut == 3:
-            small_cover_check(path, number,  json_data.get('cover_small'), c_word, conf, filepath, conf.failed_folder())
+            small_cover_check(path, number, json_data.get('cover_small'), c_word, conf, filepath, conf.failed_folder())
 
         # creatFolder会返回番号路径
-        image_download( json_data.get('cover'), number, c_word, path, conf, filepath, conf.failed_folder())
+        image_download(json_data.get('cover'), number, c_word, path, conf, filepath, conf.failed_folder())
         try:
             # 下载预告片
             if json_data.get('trailer'):
                 trailer_download(json_data.get('trailer'), c_word, number, path, filepath, conf, conf.failed_folder())
         except:
             pass
-        
+
         try:
             # 下载剧照 data, path, conf: config.Config, filepath, failed_folder
             if json_data.get('extrafanart'):
@@ -750,16 +765,17 @@ def core_main(file_path, number_th, conf: config.Config):
         cutImage(imagecut, path, number, c_word)
 
         # 打印文件
-        print_files(path, c_word,  json_data.get('naming_rule'), part, cn_sub, json_data, filepath, conf.failed_folder(), tag,  json_data.get('actor_list'), liuchu)
+        print_files(path, c_word, json_data.get('naming_rule'), part, cn_sub, json_data, filepath, conf.failed_folder(),
+                    tag, json_data.get('actor_list'), liuchu)
 
         # 移动文件
         paste_file_to_folder(filepath, path, number, c_word, conf)
-        
+
         poster_path = path + '/' + number + c_word + '-poster.jpg'
         thumb_path = path + '/' + number + c_word + '-thumb.jpg'
         if conf.is_watermark():
             add_mark(poster_path, thumb_path, cn_sub, leak, uncensored, conf)
-        
+
     elif conf.main_mode() == 2:
         # 创建文件夹
         path = create_folder(conf.success_folder(), json_data.get('location_rule'), json_data, conf)
@@ -769,7 +785,7 @@ def core_main(file_path, number_th, conf: config.Config):
         thumb_path = path + '/' + number + c_word + '-thumb.jpg'
         if conf.is_watermark():
             add_mark(poster_path, thumb_path, cn_sub, leak, uncensored, conf)
-        
+
     elif conf.main_mode() == 3:
         path = file_path.rsplit('/', 1)[0]
         path = path.rsplit('\\', 1)[0]

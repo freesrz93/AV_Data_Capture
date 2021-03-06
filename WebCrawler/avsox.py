@@ -1,15 +1,15 @@
 import sys
+
 sys.path.append('..')
-import re
-from lxml import etree
-import json
 from bs4 import BeautifulSoup
 from ADC_function import *
+
+
 # import sys
 # import io
 # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, errors = 'replace', line_buffering = True)
 
-def getActorPhoto(htmlcode): #//*[@id="star_qdt"]/li/a/img
+def getActorPhoto(htmlcode):  # //*[@id="star_qdt"]/li/a/img
     soup = BeautifulSoup(htmlcode, 'lxml')
     a = soup.find_all(attrs={'class': 'avatar-box'})
     d = {}
@@ -19,54 +19,77 @@ def getActorPhoto(htmlcode): #//*[@id="star_qdt"]/li/a/img
         p2 = {t: l}
         d.update(p2)
     return d
+
+
 def getTitle(a):
     try:
         html = etree.fromstring(a, etree.HTMLParser())
-        result = str(html.xpath('/html/body/div[2]/h3/text()')).strip(" ['']") #[0]
+        result = str(html.xpath('/html/body/div[2]/h3/text()')).strip(" ['']")  # [0]
         return result.replace('/', '')
     except:
         return ''
-def getActor(a): #//*[@id="center_column"]/div[2]/div[1]/div/table/tbody/tr[1]/td/text()
+
+
+def getActor(a):  # //*[@id="center_column"]/div[2]/div[1]/div/table/tbody/tr[1]/td/text()
     soup = BeautifulSoup(a, 'lxml')
     a = soup.find_all(attrs={'class': 'avatar-box'})
     d = []
     for i in a:
         d.append(i.span.get_text())
     return d
+
+
 def getStudio(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
-    result1 = str(html.xpath('//p[contains(text(),"制作商: ")]/following-sibling::p[1]/a/text()')).strip(" ['']").replace("', '",' ')
+    result1 = str(html.xpath('//p[contains(text(),"制作商: ")]/following-sibling::p[1]/a/text()')).strip(" ['']").replace(
+        "', '", ' ')
     return result1
+
+
 def getRuntime(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     result1 = str(html.xpath('//span[contains(text(),"长度:")]/../text()')).strip(" ['分钟']")
     return result1
+
+
 def getLabel(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     result1 = str(html.xpath('//p[contains(text(),"系列:")]/following-sibling::p[1]/a/text()')).strip(" ['']")
     return result1
+
+
 def getNum(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     result1 = str(html.xpath('//span[contains(text(),"识别码:")]/../span[2]/text()')).strip(" ['']")
     return result1
+
+
 def getYear(release):
     try:
-        result = str(re.search('\d{4}',release).group())
+        result = str(re.search('\d{4}', release).group())
         return result
     except:
         return release
+
+
 def getRelease(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     result1 = str(html.xpath('//span[contains(text(),"发行时间:")]/../text()')).strip(" ['']")
     return result1
+
+
 def getCover(htmlcode):
     html = etree.fromstring(htmlcode, etree.HTMLParser())
     result = str(html.xpath('/html/body/div[2]/div[1]/div[1]/a/img/@src')).strip(" ['']")
     return result
+
+
 def getCover_small(htmlcode):
     html = etree.fromstring(htmlcode, etree.HTMLParser())
     result = str(html.xpath('//*[@id="waterfall"]/div/a/div[1]/img/@src')).strip(" ['']")
     return result
+
+
 def getTag(a):  # 获取演员
     soup = BeautifulSoup(a, 'lxml')
     a = soup.find_all(attrs={'class': 'genre'})
@@ -74,6 +97,8 @@ def getTag(a):  # 获取演员
     for i in a:
         d.append(i.get_text())
     return d
+
+
 def getSeries(htmlcode):
     try:
         html = etree.fromstring(htmlcode, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
@@ -81,6 +106,7 @@ def getSeries(htmlcode):
         return result1
     except:
         return ''
+
 
 def main(number):
     html = get_html('https://tellme.pw/avsox')
@@ -103,9 +129,9 @@ def main(number):
         'actor': getActor(web),
         'title': getTitle(web).strip(getNum(web)),
         'studio': getStudio(info),
-        'outline': '',#
+        'outline': '',  #
         'runtime': getRuntime(info),
-        'director': '', #
+        'director': '',  #
         'release': getRelease(info),
         'number': getNum(info),
         'cover': getCover(web),
@@ -121,6 +147,7 @@ def main(number):
     }
     js = json.dumps(dic, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ':'), )  # .encode('UTF-8')
     return js
+
 
 if __name__ == "__main__":
     print(main('012717_472'))

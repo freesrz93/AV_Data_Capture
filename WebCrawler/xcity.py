@@ -1,9 +1,6 @@
 import sys
+
 sys.path.append('../')
-import re
-from lxml import etree
-import json
-from bs4 import BeautifulSoup
 from ADC_function import *
 
 
@@ -35,7 +32,8 @@ def getActorPhoto(actor):  # //*[@id="star_qdt"]/li/a/img
 def getStudio(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     try:
-        result = str(html.xpath('//*[@id="avodDetails"]/div/div[3]/div[2]/div/ul[1]/li[4]/a/span/text()')).strip(" ['']")
+        result = str(html.xpath('//*[@id="avodDetails"]/div/div[3]/div[2]/div/ul[1]/li[4]/a/span/text()')).strip(
+            " ['']")
     except:
         result = str(html.xpath('//strong[contains(text(),"片商")]/../following-sibling::span/a/text()')).strip(" ['']")
     return result.strip('+').replace("', '", '').replace('"', '')
@@ -48,7 +46,7 @@ def getRuntime(a):
     except:
         return ''
     try:
-        return re.findall('\d+',result1)[0]
+        return re.findall('\d+', result1)[0]
     except:
         return ''
 
@@ -86,18 +84,18 @@ def getRelease(a):
     except:
         return ''
     try:
-        return re.findall('\d{4}/\d{2}/\d{2}', result)[0].replace('/','-')
+        return re.findall('\d{4}/\d{2}/\d{2}', result)[0].replace('/', '-')
     except:
         return ''
 
 
 def getTag(a):
-    result2=[]
+    result2 = []
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     result1 = html.xpath('//*[@id="avodDetails"]/div/div[3]/div[2]/div/ul[1]/li[6]/a/text()')
     for i in result1:
-        i=i.replace(u'\n','')
-        i=i.replace(u'\t','')
+        i = i.replace(u'\n', '')
+        i = i.replace(u'\t', '')
         result2.append(i)
     return result2
 
@@ -125,7 +123,7 @@ def getCover(htmlcode):
 def getDirector(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     try:
-        result = html.xpath('//*[@id="program_detail_director"]/text()')[0].replace(u'\n','').replace(u'\t', '')
+        result = html.xpath('//*[@id="program_detail_director"]/text()')[0].replace(u'\n', '').replace(u'\t', '')
         return result
     except:
         return ''
@@ -138,9 +136,10 @@ def getOutline(htmlcode):
     except:
         return ''
     try:
-        return re.sub('\\\\\w*\d+','',result)
+        return re.sub('\\\\\w*\d+', '', result)
     except:
         return result
+
 
 def getSeries(htmlcode):
     html = etree.fromstring(htmlcode, etree.HTMLParser())
@@ -153,6 +152,7 @@ def getSeries(htmlcode):
             return result
     except:
         return ''
+
 
 def getExtrafanart(htmlcode):  # 获取剧照
     html_pather = re.compile(r'<div id="sample_images".*?>[\s\S]*?</div>')
@@ -169,11 +169,13 @@ def getExtrafanart(htmlcode):  # 获取剧照
             return s
     return ''
 
+
 def main(number):
     try:
         number = number.upper()
         query_result = get_html(
-            'https://xcity.jp/result_published/?genre=%2Fresult_published%2F&q=' + number.replace('-','') + '&sg=main&num=30')
+            'https://xcity.jp/result_published/?genre=%2Fresult_published%2F&q=' + number.replace('-',
+                                                                                                  '') + '&sg=main&num=30')
         html = etree.fromstring(query_result, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
         urls = html.xpath("//table[contains(@class, 'resultList')]/tr[2]/td[1]/a/@href")[0]
         detail_page = get_html('https://xcity.jp' + urls)
@@ -204,6 +206,7 @@ def main(number):
 
     js = json.dumps(dic, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ':'), )  # .encode('UTF-8')
     return js
+
 
 if __name__ == '__main__':
     print(main('VNDS-2624'))

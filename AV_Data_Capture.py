@@ -2,13 +2,13 @@ import argparse
 import json
 import os
 import re
-import sys
 import shutil
+import sys
 
 import config
 from ADC_function import get_html
-from number_parser import get_number
 from core import core_main
+from number_parser import get_number
 
 
 def check_update(local_version):
@@ -20,7 +20,7 @@ def check_update(local_version):
         print("[*]======================================================")
         return
 
-    remote = data["tag_name"].replace(".","")
+    remote = data["tag_name"].replace(".", "")
     local_version = local_version.replace(".", "")
     if not local_version > remote:
         print("[*]" + ("* New update " + str(data["tag_name"]) + " *").center(54))
@@ -32,7 +32,7 @@ def check_update(local_version):
 def argparse_function(ver: str) -> [str, str, bool]:
     parser = argparse.ArgumentParser()
     parser.add_argument("file", default='', nargs='?', help="Single Movie file path.")
-    parser.add_argument("-p","--path",default='',nargs='?',help="Analysis folder path.")
+    parser.add_argument("-p", "--path", default='', nargs='?', help="Analysis folder path.")
     parser.add_argument("-c", "--config", default='config.ini', nargs='?', help="The config file Path.")
     parser.add_argument("-n", "--number", default='', nargs='?', help="Custom file number")
     parser.add_argument("-a", "--auto-exit", dest='autoexit', action="store_true",
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     create_failed_folder(conf.failed_folder())
 
-    if not single_file_path == '': #Single File
+    if not single_file_path == '':  # Single File
         print('[+]==================== Single File =====================')
         create_data_and_move_with_custom_number(single_file_path, conf, custom_number)
     else:

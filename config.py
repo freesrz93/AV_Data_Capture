@@ -1,6 +1,5 @@
-import os
 import configparser
-import codecs
+import os
 
 
 class Config:
@@ -14,13 +13,13 @@ class Config:
         else:
             try:
                 self.conf = configparser.ConfigParser()
-                try: # From single crawler debug use only
+                try:  # From single crawler debug use only
                     self.conf.read('../' + path, encoding="utf-8-sig")
                 except:
                     self.conf.read('../' + path, encoding="utf-8")
             except Exception as e:
                 print("[-]Config file not found! Use the default settings")
-                print("[-]",e)
+                print("[-]", e)
                 self.conf = self._default_config()
 
     def main_mode(self) -> str:
@@ -37,14 +36,19 @@ class Config:
 
     def soft_link(self) -> bool:
         return self.conf.getboolean("common", "soft_link")
+
     def failed_move(self) -> bool:
         return self.conf.getboolean("common", "failed_move")
+
     def auto_exit(self) -> bool:
         return self.conf.getboolean("common", "auto_exit")
+
     def transalte_to_sc(self) -> bool:
         return self.conf.getboolean("common", "transalte_to_sc")
+
     def is_transalte(self) -> bool:
         return self.conf.getboolean("transalte", "switch")
+
     def is_trailer(self) -> bool:
         return self.conf.getboolean("trailer", "switch")
 
@@ -52,8 +56,8 @@ class Config:
         return self.conf.getboolean("watermark", "switch")
 
     def is_extrafanart(self) -> bool:
-        return self.conf.getboolean("extrafanart", "switch")   
-    
+        return self.conf.getboolean("extrafanart", "switch")
+
     def watermark_type(self) -> int:
         return int(self.conf.get("watermark", "water"))
 
@@ -73,16 +77,21 @@ class Config:
             return extrafanart_download
         except ValueError:
             self._exit("extrafanart_folder")
+
     def get_transalte_engine(self) -> str:
-        return self.conf.get("transalte","engine")
+        return self.conf.get("transalte", "engine")
+
     # def get_transalte_appId(self) ->str:
     #     return self.conf.get("transalte","appid")
     def get_transalte_key(self) -> str:
-        return self.conf.get("transalte","key")
+        return self.conf.get("transalte", "key")
+
     def get_transalte_delay(self) -> int:
-        return self.conf.getint("transalte","delay")
+        return self.conf.getint("transalte", "delay")
+
     def transalte_values(self) -> str:
         return self.conf.get("transalte", "values")
+
     def proxy(self) -> [str, int, int, str]:
         try:
             sec = "proxy"
@@ -97,19 +106,19 @@ class Config:
 
     def cacert_file(self) -> str:
         return self.conf.get('proxy', 'cacert_file')
-            
+
     def media_type(self) -> str:
         return self.conf.get('media', 'media_type')
 
     def sub_rule(self):
         return self.conf.get('media', 'sub_type').split(',')
-            
+
     def naming_rule(self) -> str:
         return self.conf.get("Name_Rule", "naming_rule")
 
     def location_rule(self) -> str:
         return self.conf.get("Name_Rule", "location_rule")
-    
+
     def max_title_len(self) -> int:
         """
         Maximum title length
@@ -165,7 +174,6 @@ class Config:
         conf.set(sec2, "type", "socks5")
         conf.set(sec2, "cacert_file", "")
 
-
         sec3 = "Name_Rule"
         conf.add_section(sec3)
         conf.set(sec3, "location_rule", "actor + '/' + number")
@@ -197,7 +205,7 @@ class Config:
         conf.set(sec8, "key", "")
         conf.set(sec8, "delay", "1")
         conf.set(sec8, "values", "title,outline")
-        
+
         sec9 = "trailer"
         conf.add_section(sec9)
         conf.set(sec9, "switch", "0")
@@ -208,8 +216,10 @@ class Config:
 
         sec11 = "media"
         conf.add_section(sec11)
-        conf.set(sec11, "media_type", ".mp4,.avi,.rmvb,.wmv,.mov,.mkv,.flv,.ts,.webm,.MP4,.AVI,.RMVB,.WMV,.MOV,.MKV,.FLV,.TS,.WEBM,iso,ISO")
-        conf.set(sec11, "sub_type", ".smi,.srt,.idx,.sub,.sup,.psb,.ssa,.ass,.txt,.usf,.xss,.ssf,.rt,.lrc,.sbv,.vtt,.ttml")
+        conf.set(sec11, "media_type",
+                 ".mp4,.avi,.rmvb,.wmv,.mov,.mkv,.flv,.ts,.webm,.MP4,.AVI,.RMVB,.WMV,.MOV,.MKV,.FLV,.TS,.WEBM,iso,ISO")
+        conf.set(sec11, "sub_type",
+                 ".smi,.srt,.idx,.sub,.sup,.psb,.ssa,.ass,.txt,.usf,.xss,.ssf,.rt,.lrc,.sbv,.vtt,.ttml")
 
         sec12 = "watermark"
         conf.add_section(sec12)

@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [ windows-latest, macos-latest, ubuntu-latest ]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
       - name: Test number_perser.get_number
         run: |
           python number_parser.py -v
-          
+
       - name: Build with PyInstaller for macos/ubuntu
         if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
         run: |

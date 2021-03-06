@@ -1,10 +1,9 @@
 import os
-import re
+
 from core import *
 
 
-
-def get_number(debug,filepath: str) -> str:
+def get_number(debug, filepath: str) -> str:
     # """
     # >>> from number_parser import get_number
     # >>> get_number("/Users/Guest/AV_Data_Capture/snis-829.mp4")
@@ -45,7 +44,7 @@ def get_number(debug,filepath: str) -> str:
                 oumei = re.search(r'[a-zA-Z]+\.\d{2}\.\d{2}\.\d{2}', filepath)
                 if oumei:
                     return oumei.group()
-                
+
                 try:
                     return str(
                         re.findall(r'(.+?)\.',
@@ -70,7 +69,7 @@ def get_number(debug,filepath: str) -> str:
             oumei = re.search(r'[a-zA-Z]+\.\d{2}\.\d{2}\.\d{2}', filepath)
             if oumei:
                 return oumei.group()
-            
+
             try:
                 return str(
                     re.findall(r'(.+?)\.',
@@ -78,7 +77,6 @@ def get_number(debug,filepath: str) -> str:
                     "['']").replace('_', '-')
             except:
                 return re.search(r'(.+?)\.', filepath)[0]
-
 
 # if __name__ == "__main__":
 #     import doctest

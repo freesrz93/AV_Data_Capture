@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('../')
 import json
 import bs4
@@ -33,10 +34,10 @@ def main(number: str):
     )
     soup = BeautifulSoup(result.text, "html.parser")
     lx = html.fromstring(str(soup))
-    
+
     fanhao_pather = re.compile(r'<a href=".*?".*?><div class="id">(.*?)</div>')
     fanhao = fanhao_pather.findall(result.text)
-    
+
     if "/?v=jav" in result.url:
         dic = {
             "title": get_title(lx, soup),
@@ -55,7 +56,7 @@ def main(number: str):
             "number": get_table_el_td(soup, "video_id"),
             "release": get_table_el_td(soup, "video_date"),
             "runtime": get_from_xpath(lx, '//*[@id="video_length"]/table/tr/td[2]/span/text()'),
-            "series":'',
+            "series": '',
         }
     elif number.upper() in fanhao:
         url_pather = re.compile(r'<a href="(.*?)".*?><div class="id">(.*?)</div>')
@@ -146,6 +147,6 @@ def get_cover(lx: html.HtmlComment) -> str:
 
 if __name__ == "__main__":
     lists = ["DVMC-003", "GS-0167", "JKREZ-001", "KMHRS-010", "KNSD-023"]
-    #lists = ["DVMC-003"]
+    # lists = ["DVMC-003"]
     for num in lists:
         print(main(num))

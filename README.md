@@ -12,18 +12,21 @@ CLI 版本
 ![](https://img.shields.io/badge/Python-3.6-yellow.svg?style=flat&logo=python)
 ![](https://img.shields.io/badge/Pyqt-5-blue.svg?style=flat)<br>
 
+**日本电影元数据 抓取工具 | 刮削器**，配合本地影片管理软件 Emby, Jellyfin, Kodi 等管理本地影片，该软件起到分类与元数据（metadata）抓取作用，利用元数据信息来分类，仅供本地影片分类整理使用。
 
-**日本电影元数据 抓取工具 | 刮削器**，配合本地影片管理软件 Emby, Jellyfin, Kodi 等管理本地影片，该软件起到分类与元数据（metadata）抓取作用，利用元数据信息来分类，仅供本地影片分类整理使用。  
 #### 本地电影刮削与整理一体化解决方案
 
 # 文档
+
 * [官方WIKI](https://github.com/yoshiko2/AV_Data_Capture/wiki)
 * [VergilGao's Docker部署](https://github.com/VergilGao/docker-avdc)
 
 # 版本发布
+
 * [Release](https://github.com/yoshiko2/AV_Data_Capture/releases)
 
-#  申明
+# 申明
+
 当你查阅、下载了本项目源代码或二进制程序，即代表你接受了以下条款
 
 * 本软件仅供技术交流，学术交流使用
@@ -36,19 +39,23 @@ CLI 版本
 * 源代码和二进制程序请在下载后24小时内删除
 * 本软件作者yoshiko2保留最终决定权和最终解释权
 * 若用户不同意上述条款任意一条，请勿使用本软件
+
 ---
-When you view and download the source code or binary program of this project, it means that you have accepted the following terms
+When you view and download the source code or binary program of this project, it means that you have accepted the
+following terms
 
 * This software is only for technical exchange and academic exchange
 * **Please do not promote this project on popular social platforms**
 * The software author wrote this software to learn Python and improve programming
 * This software does not provide any clues for video download
-* Before using this software, please understand and abide by local laws and regulations. If there is any violation of local laws and regulations during the use of this software, * please do not use this software
+* Before using this software, please understand and abide by local laws and regulations. If there is any violation of
+  local laws and regulations during the use of this software, * please do not use this software
 * When the user uses this software, if the user has any illegal acts in the local area, the user shall bear
 * It is strictly forbidden for users to use this software for commercial and personal intentions
 * Please delete the source code and binary program within 24 hours after downloading
 * The author of this software yoshiko2 reserves the right of final decision and final interpretation
 * If the user does not agree with any of the above terms, please do not use this software
+
 ---
 本プロジェクトのソースコード、バイナリファイルをダウンロード、または表示することによって、あなたは次の規約に拘束されることに同意したことになります。
 

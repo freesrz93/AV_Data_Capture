@@ -1,14 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import sys
+
 sys.path.append('../')
-import json
-import re
 from urllib.parse import urlencode
 
-from lxml import etree
-
 from ADC_function import *
+
 
 # import sys
 # import io
@@ -30,8 +28,8 @@ def getActor(text):
                 "//td[contains(text(),'出演者')]/following-sibling::td/span/a/text()"
             )
         )
-        .strip(" ['']")
-        .replace("', '", ",")
+            .strip(" ['']")
+            .replace("', '", ",")
     )
     return result
 
@@ -209,6 +207,7 @@ def getSeries(text):
     except:
         return ""
 
+
 def getExtrafanart(htmlcode):  # 获取剧照
     html_pather = re.compile(r'<div id=\"sample-image-block\"[\s\S]*?<br></div></div>')
     html = html_pather.search(htmlcode)
@@ -224,6 +223,7 @@ def getExtrafanart(htmlcode):  # 获取剧照
                 s.append(img_url)
             return s
     return ''
+
 
 def main(number):
     # fanza allow letter + number + underscore, normalize the input here
@@ -256,7 +256,7 @@ def main(number):
         if "404 Not Found" not in htmlcode:
             break
     if "404 Not Found" in htmlcode:
-        return json.dumps({"title": "",})
+        return json.dumps({"title": "", })
     try:
         # for some old page, the input number does not match the page
         # for example, the url will be cid=test012
@@ -320,7 +320,7 @@ def main_htmlcode(number):
         if "404 Not Found" not in htmlcode:
             break
     if "404 Not Found" in htmlcode:
-        return json.dumps({"title": "",})
+        return json.dumps({"title": "", })
     return htmlcode
 
 

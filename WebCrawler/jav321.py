@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('../')
 import json
 from bs4 import BeautifulSoup
@@ -34,6 +35,7 @@ def main(number: str) -> json:
         dic = {}
 
     return json.dumps(dic, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ':'))
+
 
 def get_title(lx: html.HtmlElement) -> str:
     return lx.xpath("/html/body/div[2]/div[1]/div[1]/div[1]/h3/text()")[0].strip()
@@ -83,6 +85,7 @@ def get_anchor_info(h: str) -> str:
 def get_text_info(h: str) -> str:
     return h.split(": ")[1]
 
+
 def get_trailer(html) -> str:
     videourl_pather = re.compile(r'<source src=\"(.*?)\"')
     videourl = videourl_pather.findall(html)
@@ -92,8 +95,10 @@ def get_trailer(html) -> str:
     else:
         return ''
 
+
 def get_extrafanart(htmlcode):  # 获取剧照
-    html_pather = re.compile(r'<div class=\"col\-md\-3\"><div class=\"col\-xs\-12 col\-md\-12\">[\s\S]*?</script><script async src=\"\/\/adserver\.juicyads\.com/js/jads\.js\">')
+    html_pather = re.compile(
+        r'<div class=\"col\-md\-3\"><div class=\"col\-xs\-12 col\-md\-12\">[\s\S]*?</script><script async src=\"\/\/adserver\.juicyads\.com/js/jads\.js\">')
     html = html_pather.search(htmlcode)
     if html:
         html = html.group()
@@ -103,12 +108,14 @@ def get_extrafanart(htmlcode):  # 获取剧照
             return extrafanart_imgs
     return ''
 
+
 def get_cover(lx: html.HtmlElement) -> str:
     return lx.xpath("/html/body/div[2]/div[2]/div[1]/p/a/img/@src")[0]
 
 
 def get_outline(lx: html.HtmlElement) -> str:
     return lx.xpath("/html/body/div[2]/div[1]/div[1]/div[2]/div[3]/div/text()")[0]
+
 
 def get_series2(lx: html.HtmlElement) -> str:
     return lx.xpath("/html/body/div[2]/div[1]/div[1]/div[2]/div[1]/div[2]/a[11]/text()")[0]
@@ -133,7 +140,6 @@ def get_tag(data: hash) -> str:
         return get_anchor_info(data["ジャンル"])
     else:
         return ""
-
 
 
 def get_studio(data: hash) -> str:

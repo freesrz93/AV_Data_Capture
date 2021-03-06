@@ -1,14 +1,19 @@
-import requests
-import hashlib
-import random
-import uuid
 import json
-import time
-from lxml import etree
 import re
-import config
+import time
+import uuid
 
+import requests
+import urllib3
+from lxml import etree
+
+import config
+from dict_gen import dict_gen
+
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # srz 修改：cacert_file 为空时不警告
 SUPPORT_PROXY_TYPE = ("http", "socks5", "socks5h")
+
 
 def get_data_state(data: dict) -> bool:  # 元数据获取失败检测
     if "title" not in data or "number" not in data:
@@ -23,7 +28,7 @@ def get_data_state(data: dict) -> bool:  # 元数据获取失败检测
     return True
 
 
-def getXpathSingle(htmlcode,xpath):
+def getXpathSingle(htmlcode, xpath):
     html = etree.fromstring(htmlcode, etree.HTMLParser())
     result1 = str(html.xpath(xpath)).strip(" ['']")
     return result1
@@ -45,19 +50,21 @@ def get_proxy(proxy: str, proxytype: str = None) -> dict:
 
 # 网页请求核心
 def get_html(url, cookies: dict = None, ua: str = None, return_type: str = None):
-    verify=config.Config().cacert_file()
+    verify = config.Config().cacert_file()
     switch, proxy, timeout, retry_count, proxytype = config.Config().proxy()
     proxies = get_proxy(proxy, proxytype)
 
     if ua is None:
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36"} # noqa
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36"}  # noqa
     else:
         headers = {"User-Agent": ua}
 
     for i in range(retry_count):
         try:
             if switch == '1' or switch == 1:
-                result = requests.get(str(url), headers=headers, timeout=timeout, proxies=proxies, verify=verify, cookies=cookies)
+                result = requests.get(str(url), headers=headers, timeout=timeout, proxies=proxies, verify=verify,
+                                      cookies=cookies)
             else:
                 result = requests.get(str(url), headers=headers, timeout=timeout, cookies=cookies)
 
@@ -96,7 +103,7 @@ def post_html(url: str, query: dict, headers: dict = None) -> requests.Response:
                 result = requests.post(url, data=query, headers=headers, timeout=timeout)
             return result
         except requests.exceptions.ProxyError:
-            print("[-]Connect retry {}/{}".format(i+1, retry_count))
+            print("[-]Connect retry {}/{}".format(i + 1, retry_count))
     print("[-]Connect Failed! Please check your Proxy or Network!")
 
 
@@ -121,38 +128,45 @@ def get_javlib_cookie() -> [dict, str]:
                     "http://www.m45e.com/"
                 )
         except requests.exceptions.ProxyError:
-            print("[-] ProxyError, retry {}/{}".format(i+1, retry_count))
+            print("[-] ProxyError, retry {}/{}".format(i + 1, retry_count))
         except cloudscraper.exceptions.CloudflareIUAMError:
-            print("[-] IUAMError, retry {}/{}".format(i+1, retry_count))
+            print("[-] IUAMError, retry {}/{}".format(i + 1, retry_count))
 
     return raw_cookie, user_agent
 
-def translateTag_to_sc(tag):
-    tranlate_to_sc = config.Config().transalte_to_sc()
-    if tranlate_to_sc:
 
+def translateTag_to_sc(tag):  # srz 修改：从外部文件获取词典；机翻取得未收录 tag 的翻译
+    translate_to_sc = config.Config().transalte_to_sc()
+    if translate_to_sc:
+        try:
+            with open('dict.json', encoding='utf-8') as f:
+                dict_gen.update(json.loads(f.read()))
+        except:
+            print("字典文件 dict.json 不存在！已自动生成")
         try:
             return dict_gen[tag]
         except:
+            tag = translate(tag) + '[' + tag + ']' if translate(tag) != tag else tag
             return tag
     else:
         return tag
 
+
 def translate(
-    src: str,
-    target_language: str = "zh_cn",
-    engine: str = "google-free",
-    app_id: str = "",
-    key: str = "",
-    delay: int = 0,
+        src: str,
+        target_language: str = "zh_cn",
+        engine: str = "google-free",
+        app_id: str = "",
+        key: str = "",
+        delay: int = 0,
 ):
     trans_result = ""
     if engine == "google-free":
         url = (
-            "https://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&ie=UTF-8&sl=auto&tl="
-            + target_language
-            + "&q="
-            + src
+                "https://translate.google.cn/translate_a/single?client=gtx&dt=t&dj=1&ie=UTF-8&sl=auto&tl="
+                + target_language
+                + "&q="
+                + src
         )
         result = get_html(url=url, return_type="object")
 
@@ -182,21 +196,22 @@ def translate(
     elif engine == "azure":
         url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=" + target_language
         headers = {
-                'Ocp-Apim-Subscription-Key': key,
-                'Ocp-Apim-Subscription-Region': "global",
-                'Content-type': 'application/json',
-                'X-ClientTraceId': str(uuid.uuid4())
-            }
+            'Ocp-Apim-Subscription-Key': key,
+            'Ocp-Apim-Subscription-Region': "global",
+            'Content-type': 'application/json',
+            'X-ClientTraceId': str(uuid.uuid4())
+        }
         body = json.dumps([{'text': src}])
-        result = post_html(url=url,query=body,headers=headers)
+        result = post_html(url=url, query=body, headers=headers)
         translate_list = [i["text"] for i in result.json()[0]["translations"]]
         trans_result = trans_result.join(translate_list)
 
     else:
         raise ValueError("Non-existent translation engine")
-    
+
     time.sleep(delay)
     return trans_result
+
 
 # ========================================================================是否为无码
 def is_uncensored(number):
@@ -208,3 +223,8 @@ def is_uncensored(number):
         if pre.upper() in number.upper():
             return True
     return False
+
+
+if __name__ == '__main__':
+    res = translateTag_to_sc('熟女')
+    print(res)
