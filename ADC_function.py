@@ -2,16 +2,14 @@ import json
 import re
 import time
 import uuid
-
+import traceback
 import requests
-import urllib3
 from lxml import etree
 
 import config
 from dict_gen import dict_gen
 
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # srz 修改：cacert_file 为空时不警告
 SUPPORT_PROXY_TYPE = ("http", "socks5", "socks5h")
 
 
@@ -135,19 +133,33 @@ def get_javlib_cookie() -> [dict, str]:
     return raw_cookie, user_agent
 
 
-def translateTag_to_sc(tag):  # srz 修改：从外部文件获取词典；机翻取得未收录 tag 的翻译
+def translateTag_to_sc(tag):  # srz 修改：从dict.json文件获取词典；机翻取得未收录tag的翻译, 并存入文件dict_MT.json
     translate_to_sc = config.Config().transalte_to_sc()
     if translate_to_sc:
         try:
             with open('dict.json', encoding='utf-8') as f:
-                dict_gen.update(json.loads(f.read()))
+                dict_gen.update(json.load(f))
         except:
-            print("字典文件 dict.json 不存在！已自动生成")
+            print("[!]字典文件 dict.json 不存在！新建文件...")
+            with open('dict.json', 'w', encoding='utf-8') as f:
+                json.dump({'原始词': '翻译结果'}, f)
         try:
+            print('[*]从dict.json读取tag:', end=' ')
+            print(f'{dict_gen[tag]}[{tag}]')
             return dict_gen[tag]
         except:
-            tag = translate(tag) + '[' + tag + ']' if translate(tag) != tag else tag
-            return tag
+            print('未收录tag, 调用Google翻译...')
+            tag_cn = translate(tag)
+            print(f'[*]Google翻译：{tag_cn}[{tag}]')
+            if tag_cn != tag:
+                print('[*]写入到dict_MT.json...')
+                with open('dict_MT.json', encoding='utf-8') as f:
+                    s = json.load(f)
+                    s.update({tag: tag_cn})
+                with open('dict_MT.json', 'w', encoding='utf-8') as f:
+                    json.dump(s, f, ensure_ascii=False)
+                return tag_cn + '[' + tag + ']'
+            return tag_cn
     else:
         return tag
 
@@ -226,5 +238,5 @@ def is_uncensored(number):
 
 
 if __name__ == '__main__':
-    res = translateTag_to_sc('熟女')
+    res = translateTag_to_sc('fall')
     print(res)
