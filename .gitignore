@@ -1,3 +1,8 @@
+# tag 词典
+dict_MT.json
+dict.json
+dict_gen.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
