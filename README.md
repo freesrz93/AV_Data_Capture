@@ -1,9 +1,9 @@
-###[原始项目](https://github.com/yoshiko2/AV_Data_Capture)
-##主要改动
+### [原始项目](https://github.com/yoshiko2/AV_Data_Capture)
+## 主要改动
 * 优化翻译。tag 词典被独立为 dict.json 和 dict_gen.py（有一说一之前词典存在 ADC_function.py 里看着是真的血压升高）以后词典更大时考虑完全做成外部 json 或者引入数据库。  
   机翻 tag 将被存入 dict_MT.json，以供之后人工校对审核。dict.json 和 dict_gen.py 则存储了已确认正确的 tag 翻译，优先级高于机翻。  
 
-* 以注释的形式说明每个函数的作用，以及各个模块的工作流程，更好的理解代码，方便debug和定制化功能。
+* （进行中）以注释的形式说明每个函数的作用，以及各个模块的工作流程，更好的理解代码，方便debug和定制化功能。
 * 其它优化
 
 # AV Data Capture (CLI)
