@@ -141,4 +141,6 @@ def main(number):
 
 
 if __name__ == '__main__':
+    import os
+    os.chdir('..')
     print(main('FC2-1603395'))
