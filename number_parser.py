@@ -38,6 +38,9 @@ def get_number(debug, filepath: str) -> str:
                 if 'FC2' or 'fc2' in filename:
                     filename = filename.replace('PPV', '').replace('ppv', '').replace('--', '-').replace('_', '-')
                 file_number = re.search(r'\w+-\w+', filename, re.A).group()
+                tokyo_hot_check = filename.lower()
+                if "tokyo" in tokyo_hot_check and "hot" in tokyo_hot_check:
+                    file_number = re.search(r'(cz|k|n|red-|se)\d{3,4}', tokyo_hot_check, re.A).group()
                 return file_number
             else:  # 提取不含减号-的番号，FANZA CID
                 # 欧美番号匹配规则
@@ -63,6 +66,9 @@ def get_number(debug, filepath: str) -> str:
             if 'FC2' or 'fc2' in filename:
                 filename = filename.replace('PPV', '').replace('ppv', '').replace('--', '-').replace('_', '-')
             file_number = re.search(r'\w+-\w+', filename, re.A).group()
+            tokyo_hot_check = filename.lower()
+            if "tokyo" in tokyo_hot_check and "hot" in tokyo_hot_check:
+                    file_number = re.search(r'(cz|k|n|red-|se)\d{3,4}', tokyo_hot_check, re.A).group()
             return file_number
         else:  # 提取不含减号-的番号，FANZA CID
             # 欧美番号匹配规则
