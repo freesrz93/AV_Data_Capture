@@ -6,6 +6,9 @@
   机翻 tag 将被存入 dict_MT.json，以供之后人工校对审核。dict.json 和 dict_gen.py 则存储了已确认正确的 tag 翻译，优先级高于机翻。
 
 * （进行中）以注释的形式说明每个函数的作用，以及各个模块的工作流程，更好的理解代码，方便debug和定制化功能。
+
+
+
 * 其它优化
 
 # AV Data Capture (CLI)
