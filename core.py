@@ -2,6 +2,7 @@ import os.path
 import pathlib
 import shutil
 from io import BytesIO
+from multiprocessing.pool import ThreadPool
 
 from PIL import Image
 
@@ -90,16 +91,43 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
         sources.insert(0, sources.pop(sources.index("dlsite")))
 
     json_data = {}
-    for source in sources:
-        try:
+
+    if conf.multi_threading():
+        pool = ThreadPool(processes=11)
+        MT = {
+            'avsox'   : pool.apply_async(avsox.main,   (file_number,)),
+            'fanza'   : pool.apply_async(fanza.main,   (file_number,)),
+            'fc2'     : pool.apply_async(fc2.main,     (file_number,)),
+            'jav321'  : pool.apply_async(jav321.main,  (file_number,)),
+            'javbus'  : pool.apply_async(javbus.main,  (file_number,)),
+            'javdb'   : pool.apply_async(javbus.main,  (file_number,)),
+            'mgstage' : pool.apply_async(mgstage.main, (file_number,)),
+            'xcity'   : pool.apply_async(xcity.main,   (file_number,)),
+            'javlib'  : pool.apply_async(javlib.main,  (file_number,)),
+            'dlsite'  : pool.apply_async(dlsite.main,  (file_number,)),
+            'airav'   : pool.apply_async(airav.main,   (file_number,)),
+        }
+
+        for source in sources:
             if conf.debug() == True:
                 print('[+]select', source)
-            json_data = json.loads(func_mapping[source](file_number))
+            json_data = json.loads(MT[source].get())
             # if any service return a valid return, break
             if get_data_state(json_data):
                 break
-        except:
-            break
+        pool.close()
+        pool.terminate()
+    else:
+        for source in sources:
+            try:
+                if conf.debug() == True:
+                    print('[+]select', source)
+                json_data = json.loads(func_mapping[source](file_number))
+                # if any service return a valid return, break
+                if get_data_state(json_data):
+                    break
+            except:
+                break
 
     # Return if data not found in all sources
     if not json_data:
@@ -436,7 +464,7 @@ def image_download(cover, number, leak_word, c_word, path, conf: config.Config, 
     shutil.copyfile(path + '/' + number + leak_word + c_word + '-fanart.jpg',path + '/' + number + leak_word + c_word + '-thumb.jpg')
 
 
-def print_files(path, leak_word, c_word, naming_rule, part, cn_sub, json_data, filepath, failed_folder, tag, actor_list, liuchu):
+def print_files(path, leak_word, c_word, naming_rule, part, cn_sub, json_data, filepath, failed_folder, tag, actor_list, liuchu, uncensored):
     title, studio, year, outline, runtime, director, actor_photo, release, number, cover, trailer, website, series, label = get_info(json_data)
 
     try:
@@ -470,19 +498,26 @@ def print_files(path, leak_word, c_word, naming_rule, part, cn_sub, json_data, f
                 print("  <tag>中文字幕</tag>", file=code)
             if liuchu == '流出':
                 print("  <tag>流出</tag>", file=code)
+            if uncensored == 1:
+                print("  <tag>无码</tag>", file=code)
             try:
                 for i in tag:
                     print("  <tag>" + i + "</tag>", file=code)
                 print("  <tag>" + series + "</tag>", file=code)
             except:
-                pass
+                aaaaa = ''
+            if cn_sub == '1':
+                print("  <genre>中文字幕</genre>", file=code)
+            if liuchu == '流出':
+                print("  <genre>流出</genre>", file=code)
+            if uncensored == 1:
+                print("  <genre>无码</genre>", file=code)
             try:
                 for i in tag:
                     print("  <genre>" + i + "</genre>", file=code)
+                print("  <genre>" + series + "</genre>", file=code)
             except:
-                pass
-            if cn_sub == '1':
-                print("  <genre>中文字幕</genre>", file=code)
+                aaaaaaaa = ''
             print("  <num>" + number + "</num>", file=code)
             print("  <premiered>" + release + "</premiered>", file=code)
             print("  <cover>" + cover + "</cover>", file=code)
@@ -617,8 +652,8 @@ def paste_file_to_folder(filepath, path, number, leak_word, c_word, conf: config
         sub_res = conf.sub_rule()
 
         for subname in sub_res:
-            if os.path.exists(number + leak_word + c_word + subname):  # 字幕移动
-                os.rename(number + leak_word + c_word + subname, path + '/' + number + leak_word + c_word + subname)
+            if os.path.exists(filepath.replace(houzhui, subname)):  # 字幕移动
+                os.rename(filepath.replace(houzhui, subname), path + '/' + number + leak_word + c_word + subname)
                 print('[+]Sub moved!')
                 return True
 
@@ -644,8 +679,8 @@ def paste_file_to_folder_mode2(filepath, path, multi_part, number, part, leak_wo
         
         sub_res = conf.sub_rule()
         for subname in sub_res:
-            if os.path.exists(os.getcwd() + '/' + number + leak_word + c_word + subname):  # 字幕移动
-                os.rename(os.getcwd() + '/' + number + leak_word + c_word + subname, path + '/' + number + leak_word + c_word + subname)
+            if os.path.exists(filepath.replace(houzhui, subname)):  # 字幕移动
+                os.rename(filepath.replace(houzhui, subname), path + '/' + number + leak_word + c_word + subname)
                 print('[+]Sub moved!')
                 print('[!]Success')
                 return True
@@ -776,7 +811,7 @@ def core_main(file_path, number_th, conf: config.Config):
         cutImage(imagecut, path, number, leak_word, c_word)
 
         # 打印文件
-        print_files(path, leak_word, c_word,  json_data.get('naming_rule'), part, cn_sub, json_data, filepath, conf.failed_folder(), tag,  json_data.get('actor_list'), liuchu)
+        print_files(path, leak_word, c_word,  json_data.get('naming_rule'), part, cn_sub, json_data, filepath, conf.failed_folder(), tag,  json_data.get('actor_list'), liuchu, uncensored)
 
         # 移动文件
         paste_file_to_folder(filepath, path, number, leak_word, c_word, conf)

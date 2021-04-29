@@ -1,5 +1,6 @@
-import configparser
 import os
+import configparser
+import codecs
 
 
 class Config:
@@ -42,6 +43,9 @@ class Config:
 
     def transalte_to_sc(self) -> bool:
         return self.conf.getboolean("common", "transalte_to_sc")
+
+    def multi_threading(self) -> bool:
+        return self.conf.getboolean("common", "multi_threading")
 
     def is_transalte(self) -> bool:
         return self.conf.getboolean("transalte", "switch")

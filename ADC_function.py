@@ -51,6 +51,7 @@ def get_html(url, cookies: dict = None, ua: str = None, return_type: str = None)
     verify = config.Config().cacert_file()
     switch, proxy, timeout, retry_count, proxytype = config.Config().proxy()
     proxies = get_proxy(proxy, proxytype)
+    errors = ""
 
     if ua is None:
         headers = {
@@ -79,13 +80,15 @@ def get_html(url, cookies: dict = None, ua: str = None, return_type: str = None)
             return
         except Exception as e:
             print("[-]Connect retry {}/{}".format(i + 1, retry_count))
-            print("[-]" + str(e))
+            errors = str(e)
     print('[-]Connect Failed! Please check your Proxy or Network!')
+    print("[-]" + errors)
 
 
 def post_html(url: str, query: dict, headers: dict = None) -> requests.Response:
     switch, proxy, timeout, retry_count, proxytype = config.Config().proxy()
     proxies = get_proxy(proxy, proxytype)
+    errors = ""
     headers_ua = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36"}
     if headers is None:
@@ -100,9 +103,11 @@ def post_html(url: str, query: dict, headers: dict = None) -> requests.Response:
             else:
                 result = requests.post(url, data=query, headers=headers, timeout=timeout)
             return result
-        except requests.exceptions.ProxyError:
+        except Exception as e:
             print("[-]Connect retry {}/{}".format(i + 1, retry_count))
+            errors = str(e)
     print("[-]Connect Failed! Please check your Proxy or Network!")
+    print("[-]" + errors)
 
 
 def get_javlib_cookie() -> [dict, str]:
