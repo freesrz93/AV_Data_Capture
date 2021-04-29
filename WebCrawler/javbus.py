@@ -4,7 +4,6 @@ sys.path.append('../')
 from pyquery import PyQuery as pq  # need install
 from bs4 import BeautifulSoup  # need install
 from ADC_function import *
-from WebCrawler import fanza
 from WebCrawler import airav
 
 
@@ -100,7 +99,9 @@ def getCID(htmlcode):
         'https://pics.dmm.co.jp/digital/video/', '')
     result = re.sub('/.*?.jpg', '', string)
     return result
-def getOutline(number):  #获取简介
+
+
+def getOutline(number):  # 获取简介
     try:
         response = json.loads(airav.main(number))
         result = response['outline']
@@ -148,7 +149,7 @@ def getExtrafanart(htmlcode):  # 获取剧照
 def main_uncensored(number):
     htmlcode = get_html('https://www.javbus.com/ja/' + number)
     if getTitle(htmlcode) == '':
-        htmlcode = get_html('https://www.javbus.com/ja/' + number.replace('-','_'))
+        htmlcode = get_html('https://www.javbus.com/ja/' + number.replace('-', '_'))
     dic = {
         'title': str(re.sub('\w+-\d+-', '', getTitle(htmlcode))).replace(getNum(htmlcode) + '-', ''),
         'studio': getStudio(htmlcode),

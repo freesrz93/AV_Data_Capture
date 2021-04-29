@@ -1,6 +1,5 @@
-import os
 import configparser
-import codecs
+import os
 
 
 class Config:

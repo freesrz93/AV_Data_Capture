@@ -4,9 +4,9 @@ import os
 import re
 import shutil
 import sys
+import time
 
 import config
-import time
 from ADC_function import get_html
 from core import core_main
 from number_parser import get_number
@@ -21,7 +21,7 @@ def check_update(local_version):
         print("[*]======================================================")
         return
 
-    remote = int(data["tag_name"].replace(".",""))
+    remote = int(data["tag_name"].replace(".", ""))
     local_version = int(local_version.replace(".", ""))
     if local_version < remote:
         print("[*]" + ("* New update " + str(data["tag_name"]) + " *").center(54))
@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
     end_time = time.time()
     total_time = end_time - start_time
-    print("[+]Used " + str(round(total_time,2)) + "s")
+    print("[+]Used " + str(round(total_time, 2)) + "s")
 
     print("[+]All finished!!!")
     if not (conf.auto_exit() or auto_exit):

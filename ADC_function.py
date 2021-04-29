@@ -2,13 +2,12 @@ import json
 import re
 import time
 import uuid
-import traceback
+
 import requests
 from lxml import etree
 
 import config
 from dict_gen import dict_gen
-
 
 SUPPORT_PROXY_TYPE = ("http", "socks5", "socks5h")
 
