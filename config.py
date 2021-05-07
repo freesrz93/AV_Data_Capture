@@ -1,6 +1,7 @@
+import os
+import sys
 import configparser
 import os
-
 
 class Config:
     def __init__(self, path: str = "config.ini"):  # srz 修改：加入自动生成配置文件功能

@@ -19,6 +19,9 @@ from WebCrawler import javdb
 from WebCrawler import javlib
 from WebCrawler import mgstage
 from WebCrawler import xcity
+# from WebCrawler import javlib
+from WebCrawler import dlsite
+from WebCrawler import carib
 
 
 def escape_path(path, escape_literals: str):  # Remove escape literals
@@ -57,8 +60,9 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
         "mgstage": mgstage.main,
         "jav321": jav321.main,
         "xcity": xcity.main,
-        "javlib": javlib.main,
+        # "javlib": javlib.main,
         "dlsite": dlsite.main,
+        "carib": carib.main,
     }
 
     # default fetch order list, from the beginning to the end
@@ -66,28 +70,25 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
 
     # if the input file name matches certain rules,
     # move some web service to the beginning of the list
-    if "avsox" in sources and (re.match(r"^\d{5,}", file_number) or
-                               "HEYZO" in file_number or "heyzo" in file_number or "Heyzo" in file_number
+    lo_file_number = file_number.lower()
+    if "carib" in sources and (re.match(r"^\d{6}-\d{3}", file_number)
     ):
-        # if conf.debug() == True:
-        #     print('[+]select avsox')
+        sources.insert(0, sources.pop(sources.index("carib")))
+    elif "avsox" in sources and (re.match(r"^\d{5,}", file_number) or
+        "heyzo" in lo_file_number
+    ):
         sources.insert(0, sources.pop(sources.index("avsox")))
+        sources.insert(1, sources.pop(sources.index("javdb")))
     elif "mgstage" in sources and (re.match(r"\d+\D+", file_number) or
-                                   "siro" in file_number or "SIRO" in file_number or "Siro" in file_number
+        "siro" in lo_file_number
     ):
-        # if conf.debug() == True:
-        # print('[+]select fanza')
         sources.insert(0, sources.pop(sources.index("mgstage")))
-    elif "fc2" in sources and ("fc2" in file_number or "FC2" in file_number
+    elif "fc2" in sources and ("fc2" in lo_file_number
     ):
-        # if conf.debug() == True:
-        #     print('[+]select fc2')
         sources.insert(0, sources.pop(sources.index("fc2")))
     elif "dlsite" in sources and (
-            "RJ" in file_number or "rj" in file_number or "VJ" in file_number or "vj" in file_number
+        "rj" in lo_file_number or "vj" in lo_file_number
     ):
-        # if conf.debug() == True:
-        #     print('[+]select dlsite')
         sources.insert(0, sources.pop(sources.index("dlsite")))
 
     json_data = {}
@@ -95,23 +96,29 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
     if conf.multi_threading():
         pool = ThreadPool(processes=11)
         MT = {
-            'avsox': pool.apply_async(avsox.main, (file_number,)),
-            'fanza': pool.apply_async(fanza.main, (file_number,)),
-            'fc2': pool.apply_async(fc2.main, (file_number,)),
-            'jav321': pool.apply_async(jav321.main, (file_number,)),
-            'javbus': pool.apply_async(javbus.main, (file_number,)),
-            'javdb': pool.apply_async(javbus.main, (file_number,)),
-            'mgstage': pool.apply_async(mgstage.main, (file_number,)),
-            'xcity': pool.apply_async(xcity.main, (file_number,)),
-            'javlib': pool.apply_async(javlib.main, (file_number,)),
-            'dlsite': pool.apply_async(dlsite.main, (file_number,)),
-            'airav': pool.apply_async(airav.main, (file_number,)),
+            'javbus'  : pool.apply_async,
+            'javdb'   : pool.apply_async,
+            'avsox'   : pool.apply_async,
+            'fanza'   : pool.apply_async,
+            'fc2'     : pool.apply_async,
+            'xcity'   : pool.apply_async,
+            'jav321'  : pool.apply_async,
+            'mgstage' : pool.apply_async,
+            # 'javlib'  : pool.apply_async,
+            'dlsite'  : pool.apply_async,
+            'airav'   : pool.apply_async,
+            'carib'   : pool.apply_async,
         }
 
+        # Set the priority of multi-thread crawling and join the multi-thread queue
+        for source in sources:
+            MT[source](func_mapping[source], (file_number,))
+
+        # Get multi-threaded crawling response
         for source in sources:
             if conf.debug() == True:
                 print('[+]select', source)
-            json_data = json.loads(MT[source].get())
+            json_data = json.loads(MT[source](func_mapping[source], (file_number,)).get())
             # if any service return a valid return, break
             if get_data_state(json_data):
                 break
@@ -642,10 +649,10 @@ def paste_file_to_folder(filepath, path, number, leak_word, c_word, conf: config
     houzhui = os.path.splitext(filepath)[1].replace(",", "")
     file_parent_origin_path = str(pathlib.Path(filepath).parent)
     try:
-        targetpath = path + '/' + number + c_word + houzhui
+        targetpath = path + '/' + number + leak_word + c_word + houzhui
         # 如果soft_link=1 使用软链接
         if conf.soft_link() == 0:
-            os.rename(filepath, path + '/' + number + c_word + houzhui)
+            os.rename(filepath, targetpath)
         elif conf.soft_link() == 1:
             # 采用相对路径，以便网络访问时能正确打开视频
             filerelpath = os.path.relpath(filepath, path)
@@ -690,7 +697,7 @@ def paste_file_to_folder_mode2(filepath, path, multi_part, number, part, leak_wo
         sub_res = conf.sub_rule()
         for subname in sub_res:
             if os.path.exists(filepath.replace(houzhui, subname)):  # 字幕移动
-                os.rename(filepath.replace(houzhui, subname), path + '/' + number + leak_word + c_word + subname)
+                os.rename(filepath.replace(houzhui, subname), path + '/' + number + part + leak_word + c_word + subname)
                 print('[+]Sub moved!')
                 print('[!]Success')
                 return True
@@ -790,7 +797,7 @@ def core_main(file_path, number_th, conf: config.Config):
     # main_mode
     #  1: 刮削模式 / Scraping mode
     #  2: 整理模式 / Organizing mode
-    #  3：不改变路径刮削 
+    #  3：不改变路径刮削
     if conf.main_mode() == 1:
         # 创建文件夹
         path = create_folder(conf.success_folder(), json_data.get('location_rule'), json_data, conf)

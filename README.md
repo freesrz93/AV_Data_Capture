@@ -11,7 +11,8 @@
 
 * 其它优化
 
-# AV Data Capture (CLI)
+
+<h1 align="center">AV Data Capture - CLI</h1>
 
 CLI 版本  
 ![](https://img.shields.io/badge/build-passing-brightgreen.svg?style=flat)
@@ -34,9 +35,8 @@ CLI 版本
 * [官方WIKI](https://github.com/yoshiko2/AV_Data_Capture/wiki)
 * [VergilGao's Docker部署](https://github.com/VergilGao/docker-avdc)
 
-# 版本发布
-
-* [Release](https://github.com/yoshiko2/AV_Data_Capture/releases)
+# 下载
+* [Releases](https://github.com/yoshiko2/AV_Data_Capture/releases)
 
 # 申明
 

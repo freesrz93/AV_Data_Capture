@@ -95,7 +95,7 @@ def main(number: str):
             "series": '',
         }
     else:
-        dic = {}
+        dic = {"title": ""}
 
     return json.dumps(dic, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ':'))
 

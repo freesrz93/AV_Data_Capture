@@ -33,15 +33,15 @@ def check_update(local_version):
 def argparse_function(ver: str) -> [str, str, bool]:
     parser = argparse.ArgumentParser()
     parser.add_argument("file", default='', nargs='?', help="Single Movie file path.")
-    parser.add_argument("-p", "--path", default='', nargs='?', help="Analysis folder path.")
-    parser.add_argument("-c", "--config", default='config.ini', nargs='?', help="The config file Path.")
+    parser.add_argument("-p","--path",default='',nargs='?',help="Analysis folder path.")
+    # parser.add_argument("-c", "--config", default='config.ini', nargs='?', help="The config file Path.")
     parser.add_argument("-n", "--number", default='', nargs='?', help="Custom file number")
     parser.add_argument("-a", "--auto-exit", dest='autoexit', action="store_true",
                         help="Auto exit after program complete")
     parser.add_argument("-v", "--version", action="version", version=ver)
     args = parser.parse_args()
 
-    return args.file, args.path, args.config, args.number, args.autoexit
+    return args.file, args.path, args.number, args.autoexit
 
 
 def movie_lists(root, escape_folder):
@@ -113,7 +113,7 @@ def create_data_and_move(file_path: str, c: config.Config, debug):
                         print('[!]', err)
 
 
-def create_data_and_move_with_custom_number(file_path: str, c: config.Config, custom_number=None):
+def create_data_and_move_with_custom_number(file_path: str, c: config.Config, custom_number):
     try:
         print("[!]Making Data for [{}], the number is [{}]".format(file_path, custom_number))
         core_main(file_path, custom_number, c)
@@ -134,17 +134,18 @@ def create_data_and_move_with_custom_number(file_path: str, c: config.Config, cu
 
 
 if __name__ == '__main__':
-    version = '4.6.1'
+    version = '4.6.2'
 
     # Parse command line args
-    single_file_path, folder_path, config_file, custom_number, auto_exit = argparse_function(version)
+    single_file_path, folder_path, custom_number, auto_exit = argparse_function(version)
 
     print('[*]================== AV Data Capture ===================')
     print('[*]' + version.center(54))
     print('[*]======================================================')
 
     # Read config.ini
-    conf = config.Config(path=config_file)
+    conf = config.Config("config.ini")
+
 
     if conf.update_check():
         check_update(version)
@@ -155,10 +156,14 @@ if __name__ == '__main__':
         print('[!]Enable soft link')
 
     create_failed_folder(conf.failed_folder())
+    start_time = time.time()
 
     if not single_file_path == '':  # Single File
         print('[+]==================== Single File =====================')
-        create_data_and_move_with_custom_number(single_file_path, conf, custom_number)
+        if custom_number == '':
+            create_data_and_move_with_custom_number(single_file_path, conf, get_number(conf.debug(), os.path.basename(single_file_path)))
+        else:
+            create_data_and_move_with_custom_number(single_file_path, conf, custom_number)
     else:
         if folder_path == '':
             folder_path = os.path.abspath(".")
@@ -168,8 +173,6 @@ if __name__ == '__main__':
         count = 0
         count_all = str(len(movie_list))
         print('[+]Find', count_all, 'movies')
-
-        start_time = time.time()
 
         for movie_path in movie_list:  # 遍历电影列表 交给core处理
             count = count + 1
