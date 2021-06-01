@@ -2,6 +2,10 @@ import os
 
 from core import *
 
+G_spat = re.compile(
+    "(^22-sht\.me|-fhd|_fhd|^fhd_|^fhd-|-hd|_hd|^hd_|^hd-|-sd|_sd|-1080p|_1080p|-720p|_720p)",
+    re.IGNORECASE)
+
 
 def get_number(debug, filepath: str) -> str:
     # """
@@ -33,18 +37,20 @@ def get_number(debug, filepath: str) -> str:
         try:
             if '-' in filepath or '_' in filepath:  # 普通提取番号 主要处理包含减号-和_的番号
                 #filepath = filepath.replace("_", "-")
-                filepath.strip('22-sht.me').strip('-HD').strip('-hd')
+                filepath = G_spat.sub("", filepath)
                 filename = str(re.sub("\[\d{4}-\d{1,2}-\d{1,2}\] - ", "", filepath))  # 去除文件名中时间
                 lower_check = filename.lower()
                 if 'fc2' in lower_check:
                     filename = lower_check.replace('ppv', '').replace('--', '-').replace('_', '-').upper()
                 file_number = re.search(r'\w+(-|_)\w+', filename, re.A).group()
                 if "tokyo" in lower_check and "hot" in lower_check:
-                    file_number = re.search(r'(cz|k|n|red-|se)\d{3,4}', lower_check, re.A).group()
+                    file_number = re.search(r'(cz|gedo|k|n|red-|se)\d{2,4}', lower_check, re.A).group()
                 elif "carib" in lower_check:
                     file_number = str(re.search(r'\d{6}(-|_)\d{3}', lower_check, re.A).group()).replace('_', '-')
-                elif "1pon" in lower_check:
+                elif "1pon" in lower_check or "paco" in lower_check:
                     file_number = str(re.search(r'\d{6}(-|_)\d{3}', lower_check, re.A).group()).replace('-', '_')
+                elif "10mu" in lower_check:
+                    file_number = str(re.search(r'\d{6}(-|_)\d{2}', lower_check, re.A).group()).replace('-', '_')
                 return file_number
             else:  # 提取不含减号-的番号，FANZA CID
                 # 欧美番号匹配规则
@@ -65,18 +71,20 @@ def get_number(debug, filepath: str) -> str:
     elif debug == True:
         if '-' in filepath or '_' in filepath:  # 普通提取番号 主要处理包含减号-和_的番号
             #filepath = filepath.replace("_", "-")
-            filepath.strip('22-sht.me').strip('-HD').strip('-hd')
+            filepath = G_spat.sub("", filepath)
             filename = str(re.sub("\[\d{4}-\d{1,2}-\d{1,2}\] - ", "", filepath))  # 去除文件名中时间
             lower_check = filename.lower()
             if 'fc2' in lower_check:
                 filename = lower_check.replace('ppv', '').replace('--', '-').replace('_', '-').upper()
             file_number = re.search(r'\w+(-|_)\w+', filename, re.A).group()
             if "tokyo" in lower_check and "hot" in lower_check:
-                file_number = re.search(r'(cz|k|n|red-|se)\d{3,4}', lower_check, re.A).group()
+                file_number = re.search(r'(cz|gedo|k|n|red-|se)\d{2,4}', lower_check, re.A).group()
             elif "carib" in lower_check:
                 file_number = str(re.search(r'\d{6}(-|_)\d{3}', lower_check, re.A).group()).replace('_', '-')
-            elif "1pon" in lower_check:
+            elif "1pon" in lower_check or "paco" in lower_check:
                 file_number = str(re.search(r'\d{6}(-|_)\d{3}', lower_check, re.A).group()).replace('-', '_')
+            elif "10mu" in lower_check:
+                file_number = str(re.search(r'\d{6}(-|_)\d{2}', lower_check, re.A).group()).replace('-', '_')
             return file_number
         else:  # 提取不含减号-的番号，FANZA CID
             # 欧美番号匹配规则

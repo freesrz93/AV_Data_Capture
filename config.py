@@ -32,6 +32,9 @@ class Config:
     def success_folder(self) -> str:
         return self.conf.get("common", "success_output_folder")
 
+    def actor_gender(self) -> str:
+        return self.conf.get("common", "actor_gender")
+
     def soft_link(self) -> bool:
         return self.conf.getboolean("common", "soft_link")
 
@@ -103,10 +106,8 @@ class Config:
         except ValueError:
             self._exit("common")
 
-    def cacert_file(self) -> [str, bool]:  # srz 修改：防止不设置时出现警告
-        if self.conf.get('proxy', 'cacert_file'):
-            return self.conf.get('proxy', 'cacert_file')
-        return True
+    def cacert_file(self) -> str:
+        return self.conf.get('proxy', 'cacert_file')
 
     def media_type(self) -> str:
         return self.conf.get('media', 'media_type')
@@ -166,6 +167,8 @@ class Config:
         conf.set(sec1, "failed_move", "1")
         conf.set(sec1, "auto_exit", "0")
         conf.set(sec1, "transalte_to_sc", "1")
+        # actor_gender value: female or male or both or all(含人妖)
+        conf.set(sec1, "actor_gender", "female")
 
         sec2 = "proxy"  # srz 修改：原作者漏项了
         conf.add_section(sec2)
@@ -257,3 +260,4 @@ if __name__ == "__main__":
     print(config.get_transalte_key())
     print(config.get_transalte_delay())
     print(config.transalte_values())
+    print(config.actor_gender())

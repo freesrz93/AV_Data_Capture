@@ -16,7 +16,6 @@ from WebCrawler import fc2
 from WebCrawler import jav321
 from WebCrawler import javbus
 from WebCrawler import javdb
-from WebCrawler import javlib
 from WebCrawler import mgstage
 from WebCrawler import xcity
 # from WebCrawler import javlib
@@ -77,15 +76,16 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # ä»ŽJSONè¿
     elif "avsox" in sources and (re.match(r"^\d{5,}", file_number) or
         "heyzo" in lo_file_number
     ):
-        sources.insert(0, sources.pop(sources.index("avsox")))
-        sources.insert(1, sources.pop(sources.index("javdb")))
+        sources.insert(0, sources.pop(sources.index("javdb")))
+        sources.insert(1, sources.pop(sources.index("avsox")))
     elif "mgstage" in sources and (re.match(r"\d+\D+", file_number) or
         "siro" in lo_file_number
     ):
         sources.insert(0, sources.pop(sources.index("mgstage")))
     elif "fc2" in sources and ("fc2" in lo_file_number
     ):
-        sources.insert(0, sources.pop(sources.index("fc2")))
+        sources.insert(0, sources.pop(sources.index("javdb")))
+        sources.insert(1, sources.pop(sources.index("fc2")))
     elif "dlsite" in sources and (
         "rj" in lo_file_number or "vj" in lo_file_number
     ):
@@ -95,30 +95,16 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # ä»ŽJSONè¿
 
     if conf.multi_threading():
         pool = ThreadPool(processes=11)
-        MT = {
-            'javbus'  : pool.apply_async,
-            'javdb'   : pool.apply_async,
-            'avsox'   : pool.apply_async,
-            'fanza'   : pool.apply_async,
-            'fc2'     : pool.apply_async,
-            'xcity'   : pool.apply_async,
-            'jav321'  : pool.apply_async,
-            'mgstage' : pool.apply_async,
-            # 'javlib'  : pool.apply_async,
-            'dlsite'  : pool.apply_async,
-            'airav'   : pool.apply_async,
-            'carib'   : pool.apply_async,
-        }
 
         # Set the priority of multi-thread crawling and join the multi-thread queue
         for source in sources:
-            MT[source](func_mapping[source], (file_number,))
+            pool.apply_async(func_mapping[source], (file_number,))
 
         # Get multi-threaded crawling response
         for source in sources:
             if conf.debug() == True:
                 print('[+]select', source)
-            json_data = json.loads(MT[source](func_mapping[source], (file_number,)).get())
+            json_data = json.loads(pool.apply_async(func_mapping[source], (file_number,)).get())
             # if any service return a valid return, break
             if get_data_state(json_data):
                 break
