@@ -9,11 +9,11 @@ from bs4 import BeautifulSoup
 from lxml import html
 from http.cookies import SimpleCookie
 
-from ADC_function import get_javlib_cookie, get_html
+from ADC_function import get_html
 
 
 def main(number: str):
-    raw_cookies, user_agent = get_javlib_cookie()
+    raw_cookies, user_agent = ()
 
     # Blank cookies mean javlib site return error
     if not raw_cookies:
