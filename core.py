@@ -353,17 +353,17 @@ def trimblank(s: str):
 
 # path = examle:photo , video.in the Project Folder!
 def download_file_with_filename(url, filename, path, conf: config.Config, filepath, failed_folder):
-    switch, proxy, timeout, retry_count, proxytype = config.Config().proxy()
+    configProxy = conf.proxy()
 
-    for i in range(retry_count):
+    for i in range(configProxy.retry):
         try:
-            if switch == 1 or switch == '1':
+            if configProxy.enable:
                 if not os.path.exists(path):
                     os.makedirs(path)
-                proxies = get_proxy(proxy, proxytype)
+                proxies = configProxy.proxies()
                 headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
-                r = requests.get(url, headers=headers, timeout=timeout, proxies=proxies)
+                r = requests.get(url, headers=headers, timeout=configProxy.timeout, proxies=proxies)
                 if r == '':
                     print('[-]Movie Data not found!')
                     return
@@ -375,25 +375,25 @@ def download_file_with_filename(url, filename, path, conf: config.Config, filepa
                     os.makedirs(path)
                 headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
-                r = requests.get(url, timeout=timeout, headers=headers)
+                r = requests.get(url, timeout=configProxy.timeout, headers=headers)
                 if r == '':
                     print('[-]Movie Data not found!')
                     return
                 with open(str(path) + "/" + filename, "wb") as code:
                     code.write(r.content)
                 return
-        except requests.exceptions.ConnectTimeout:
-            i += 1
-            print('[-]Image Download :  Timeout retry ' + str(i) + '/' + str(retry_count))
-        except requests.exceptions.ProxyError:
-            i += 1
-            print('[-]Image Download :  PROXY error retry ' + str(i) + '/' + str(retry_count))
-        except requests.exceptions.ConnectionError:
-            i += 1
-            print('[-]Image Download :  Can\'t connect retry ' + str(i) + '/' + str(retry_count))
         except requests.exceptions.RequestException:
             i += 1
-            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(retry_count))
+            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(configProxy.retry))
+        except requests.exceptions.ConnectionError:
+            i += 1
+            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(configProxy.retry))
+        except requests.exceptions.ProxyError:
+            i += 1
+            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(configProxy.retry))
+        except requests.exceptions.ConnectTimeout:
+            i += 1
+            print('[-]Image Download :  Connect retry ' + str(i) + '/' + str(configProxy.retry))
     print('[-]Connect Failed! Please check your Proxy or Network!')
     moveFailedFolder(filepath, failed_folder)
     return
@@ -403,9 +403,9 @@ def trailer_download(trailer, leak_word, c_word, number, path, filepath, conf: c
     if download_file_with_filename(trailer, number + leak_word + c_word + '-trailer.mp4', path, conf, filepath,
                                    failed_folder) == 'failed':
         return
-    switch, _proxy, _timeout, retry, _proxytype = conf.proxy()
-    for i in range(retry):
-        if os.path.getsize(path + '/' + number + leak_word + c_word + '-trailer.mp4') == 0:
+    configProxy = conf.proxy()
+    for i in range(configProxy.retry):
+        if os.path.getsize(path+'/' + number + leak_word + c_word + '-trailer.mp4') == 0:
             print('[!]Video Download Failed! Trying again. [{}/3]', i + 1)
             download_file_with_filename(trailer, number + leak_word + c_word + '-trailer.mp4', path, conf, filepath,
                                         failed_folder)
@@ -426,8 +426,8 @@ def extrafanart_download(data, path, conf: config.Config, filepath, failed_folde
                                        failed_folder) == 'failed':
             moveFailedFolder(filepath, failed_folder)
             return
-        switch, _proxy, _timeout, retry, _proxytype = conf.proxy()
-        for i in range(retry):
+        configProxy = conf.proxy()
+        for i in range(configProxy.retry):
             if os.path.getsize(path + '/extrafanart-' + str(j) + '.jpg') == 0:
                 print('[!]Image Download Failed! Trying again. [{}/3]', i + 1)
                 download_file_with_filename(url, '/extrafanart-' + str(j) + '.jpg', path, conf, filepath,
@@ -448,8 +448,8 @@ def image_download(cover, number, leak_word, c_word, path, conf: config.Config, 
         moveFailedFolder(filepath, failed_folder)
         return
 
-    switch, _proxy, _timeout, retry, _proxytype = conf.proxy()
-    for i in range(retry):
+    configProxy = conf.proxy()
+    for i in range(configProxy.retry):
         if os.path.getsize(path + '/' + number + leak_word + c_word + '-fanart.jpg') == 0:
             print('[!]Image Download Failed! Trying again. [{}/3]', i + 1)
             download_file_with_filename(cover, number + leak_word + c_word + '-fanart.jpg', path, conf, filepath,

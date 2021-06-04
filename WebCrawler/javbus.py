@@ -101,9 +101,7 @@ def getCID(htmlcode):
         'https://pics.dmm.co.jp/digital/video/', '')
     result = re.sub('/.*?.jpg', '', string)
     return result
-
-
-def getOutline(number):  # 获取简介
+def getOutline(number):  #获取剧情介绍
     try:
         response = json.loads(airav.main(number))
         result = response['outline']
