@@ -1,3 +1,2 @@
-pyinstaller -F AV_Data_Capture.py
-del AV_Data_Capture.spec
-del build
+pyinstaller -F AV_Data_Capture.py -n AV_Data_Capture_srz
+del AV_Data_Capture_srz.spec
