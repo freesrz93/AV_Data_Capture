@@ -1,15 +1,12 @@
-import requests
-import hashlib
-import pathlib
-import random
-import uuid
 import json
+import pathlib
 import re
 import time
 import uuid
 
 import requests
 from lxml import etree
+from zhconv import convert
 
 import config
 from dict_gen import dict_gen
@@ -125,6 +122,12 @@ def post_html(url: str, query: dict, headers: dict = None) -> requests.Response:
 #
 #     return raw_cookie, user_agent
 
+def is_all_chinese(str1):  # 判断是否全部为中文字符
+    for _char in str1:
+        if not '\u4e00' <= _char <= '\u9fa5':
+            return False
+    return True
+
 
 def translateTag_to_sc(tag):  # srz 修改：从dict.json文件获取词典；机翻取得未收录tag的翻译, 并存入文件dict_MT.json
     translate_to_sc = config.Config().transalte_to_sc()
@@ -137,22 +140,21 @@ def translateTag_to_sc(tag):  # srz 修改：从dict.json文件获取词典；�
             with open('dict.json', 'w', encoding='utf-8') as f:
                 json.dump({'原始词': '翻译结果'}, f)
         try:
-            print('[*]从dict.json读取tag:', end=' ')
-            print(f'{dict_gen[tag]}[{tag}]')
             return dict_gen[tag]
-        except:
-            print('未收录tag, 调用Google翻译...')
-            tag_cn = translate(tag)
-            print(f'[*]Google翻译：{tag_cn}[{tag}]')
-            if tag_cn != tag:
-                print('[*]写入到dict_MT.json...')
+        except:  # 未知tag
+            x = convert(tag, 'zh-cn')
+            if is_all_chinese(tag):
+                return x
+            else:
+                print('未收录tag, Google翻译...')
+                tag_cn = translate(tag)
+                print(f'[*]Google翻译：{tag_cn}[{tag}]')
                 with open('dict_MT.json', encoding='utf-8') as f:
                     s = json.load(f)
                     s.update({tag: tag_cn})
                 with open('dict_MT.json', 'w', encoding='utf-8') as f:
                     json.dump(s, f, ensure_ascii=False)
                 return tag_cn + '[' + tag + ']'
-            return tag_cn
     else:
         return tag
 
@@ -229,6 +231,7 @@ def is_uncensored(number):
             return True
     return False
 
+
 # 从浏览器中导出网站登录验证信息的cookies，能够以会员方式打开游客无法访问到的页面
 # 示例: FC2-755670 url https://javdb9.com/v/vO8Mn
 # json 文件格式
@@ -245,6 +248,8 @@ def is_uncensored(number):
     "theme":"auto"
 }
 '''
+
+
 # 从网站登录后，通过浏览器插件(CookieBro或EdittThisCookie)或者直接在地址栏网站链接信息处都可以复制或者导出cookie内容，
 # 并填写到以上json文件的相应字段中
 def load_cookies(filename):
@@ -252,6 +257,7 @@ def load_cookies(filename):
         return json.load(open(filename))
     except:
         return None
+
 
 # 文件修改时间距此时的天数
 def file_modification_days(filename) -> int:
@@ -264,7 +270,6 @@ def file_modification_days(filename) -> int:
     if days < 0:
         return 9999
     return days
-
 
 
 if __name__ == '__main__':
