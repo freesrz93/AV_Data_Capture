@@ -101,7 +101,9 @@ def getCID(htmlcode):
         'https://pics.dmm.co.jp/digital/video/', '')
     result = re.sub('/.*?.jpg', '', string)
     return result
-def getOutline(number):  #获取剧情介绍
+
+
+def getOutline(number):  # 获取剧情介绍
     try:
         response = json.loads(airav.main(number))
         result = response['outline']
@@ -128,7 +130,7 @@ def getTag(htmlcode):  # 获取标签
     soup = BeautifulSoup(htmlcode, 'lxml')
     a = soup.find_all(attrs={'class': 'genre'})
     for i in a:
-        if 'onmouseout' in str(i) or '多選提交' in str(i):
+        if 'onmouseout' in str(i) or '多選提交' in str(i) or '多重提出する' in str(i):
             continue
         tag.append(translateTag_to_sc(i.get_text()))
     return tag

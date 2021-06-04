@@ -1,5 +1,4 @@
 import os.path
-import pathlib
 import shutil
 from io import BytesIO
 from multiprocessing.pool import ThreadPool
@@ -10,6 +9,8 @@ from ADC_function import *
 # =========website========
 from WebCrawler import airav
 from WebCrawler import avsox
+from WebCrawler import carib
+# from WebCrawler import javlib
 from WebCrawler import dlsite
 from WebCrawler import fanza
 from WebCrawler import fc2
@@ -18,9 +19,6 @@ from WebCrawler import javbus
 from WebCrawler import javdb
 from WebCrawler import mgstage
 from WebCrawler import xcity
-# from WebCrawler import javlib
-from WebCrawler import dlsite
-from WebCrawler import carib
 
 
 def escape_path(path, escape_literals: str):  # Remove escape literals
@@ -74,12 +72,12 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # ä»ŽJSONè¿
     ):
         sources.insert(0, sources.pop(sources.index("carib")))
     elif "avsox" in sources and (re.match(r"^\d{5,}", file_number) or
-        "heyzo" in lo_file_number
+                                 "heyzo" in lo_file_number
     ):
         sources.insert(0, sources.pop(sources.index("javdb")))
         sources.insert(1, sources.pop(sources.index("avsox")))
     elif "mgstage" in sources and (re.match(r"\d+\D+", file_number) or
-        "siro" in lo_file_number
+                                   "siro" in lo_file_number
     ):
         sources.insert(0, sources.pop(sources.index("mgstage")))
     elif "fc2" in sources and ("fc2" in lo_file_number
@@ -87,7 +85,7 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # ä»ŽJSONè¿
         sources.insert(0, sources.pop(sources.index("javdb")))
         sources.insert(1, sources.pop(sources.index("fc2")))
     elif "dlsite" in sources and (
-        "rj" in lo_file_number or "vj" in lo_file_number
+            "rj" in lo_file_number or "vj" in lo_file_number
     ):
         sources.insert(0, sources.pop(sources.index("dlsite")))
 
@@ -405,7 +403,7 @@ def trailer_download(trailer, leak_word, c_word, number, path, filepath, conf: c
         return
     configProxy = conf.proxy()
     for i in range(configProxy.retry):
-        if os.path.getsize(path+'/' + number + leak_word + c_word + '-trailer.mp4') == 0:
+        if os.path.getsize(path + '/' + number + leak_word + c_word + '-trailer.mp4') == 0:
             print('[!]Video Download Failed! Trying again. [{}/3]', i + 1)
             download_file_with_filename(trailer, number + leak_word + c_word + '-trailer.mp4', path, conf, filepath,
                                         failed_folder)

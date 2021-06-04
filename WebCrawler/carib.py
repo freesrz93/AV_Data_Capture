@@ -1,15 +1,15 @@
 import sys
+
 sys.path.append('../')
-import json
 from bs4 import BeautifulSoup
 from lxml import html
-import re
 from ADC_function import *
+
 
 def main(number: str) -> json:
     try:
-        caribbytes = get_html('https://www.caribbeancom.com/moviepages/'+number+'/index.html',
-                             return_type="content")
+        caribbytes = get_html('https://www.caribbeancom.com/moviepages/' + number + '/index.html',
+                              return_type="content")
 
         caribhtml = caribbytes.decode("euc_jp")
 
@@ -46,14 +46,19 @@ def main(number: str) -> json:
     js = json.dumps(dic, ensure_ascii=False, sort_keys=True, indent=4, separators=(',', ':'), )
     return js
 
+
 def get_title(lx: html.HtmlElement) -> str:
-    return str(lx.xpath("//div[@class='movie-info section']/div[@class='heading']/h1[@itemprop='name']/text()")[0]).strip()
+    return str(
+        lx.xpath("//div[@class='movie-info section']/div[@class='heading']/h1[@itemprop='name']/text()")[0]).strip()
+
 
 def get_year(lx: html.HtmlElement) -> str:
     return lx.xpath("//li[2]/span[@class='spec-content']/text()")[0][:4]
 
+
 def get_release(lx: html.HtmlElement) -> str:
-    return lx.xpath("//li[2]/span[@class='spec-content']/text()")[0].replace('/','-')
+    return lx.xpath("//li[2]/span[@class='spec-content']/text()")[0].replace('/', '-')
+
 
 def get_actor(lx: html.HtmlElement) -> str:
     r = []
@@ -63,12 +68,14 @@ def get_actor(lx: html.HtmlElement) -> str:
             r.append(act)
     return r
 
+
 def get_tag(lx: html.HtmlElement) -> str:
     r = []
     genres = lx.xpath("//span[@class='spec-content']/a[@itemprop='genre']/text()")
     for g in genres:
         r.append(translateTag_to_sc(str(g)))
     return r
+
 
 def get_extrafanart(lx: html.HtmlElement) -> str:
     r = []
@@ -81,8 +88,10 @@ def get_extrafanart(lx: html.HtmlElement) -> str:
             r.append('https://www.caribbeancom.com' + jpg)
     return r
 
+
 def get_runtime(lx: html.HtmlElement) -> str:
-    return str(lx.xpath( "//span[@class='spec-content']/span[@itemprop='duration']/text()")[0]).strip()
+    return str(lx.xpath("//span[@class='spec-content']/span[@itemprop='duration']/text()")[0]).strip()
+
 
 if __name__ == "__main__":
     print(main("041721-001"))

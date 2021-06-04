@@ -36,7 +36,7 @@ def get_number(debug, filepath: str) -> str:
     if debug == False:
         try:
             if '-' in filepath or '_' in filepath:  # 普通提取番号 主要处理包含减号-和_的番号
-                #filepath = filepath.replace("_", "-")
+                # filepath = filepath.replace("_", "-")
                 filepath = G_spat.sub("", filepath)
                 filename = str(re.sub("\[\d{4}-\d{1,2}-\d{1,2}\] - ", "", filepath))  # 去除文件名中时间
                 lower_check = filename.lower()
@@ -70,7 +70,7 @@ def get_number(debug, filepath: str) -> str:
             return
     elif debug == True:
         if '-' in filepath or '_' in filepath:  # 普通提取番号 主要处理包含减号-和_的番号
-            #filepath = filepath.replace("_", "-")
+            # filepath = filepath.replace("_", "-")
             filepath = G_spat.sub("", filepath)
             filename = str(re.sub("\[\d{4}-\d{1,2}-\d{1,2}\] - ", "", filepath))  # 去除文件名中时间
             lower_check = filename.lower()

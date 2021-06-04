@@ -145,9 +145,15 @@ def main(number2):
     htmlcode = str(
         get_html('https://www.mgstage.com/product/product_detail/' + str(number) + '/', cookies={'adc': '1'}))
     soup = BeautifulSoup(htmlcode, 'lxml')
-    a = str(soup.find(attrs={'class': 'detail_data'})).replace('\n                                        ','').replace('                                ','').replace('\n                            ','').replace('\n                        ','')
-    b = str(soup.find(attrs={'id': 'introduction'})).replace('\n                                        ','').replace('                                ','').replace('\n                            ','').replace('\n                        ','')
-    #print(b)
+    a = str(soup.find(attrs={'class': 'detail_data'})).replace('\n                                        ',
+                                                               '').replace('                                ',
+                                                                           '').replace('\n                            ',
+                                                                                       '').replace(
+        '\n                        ', '')
+    b = str(soup.find(attrs={'id': 'introduction'})).replace('\n                                        ', '').replace(
+        '                                ', '').replace('\n                            ', '').replace(
+        '\n                        ', '')
+    # print(b)
     try:
         dic = {
             'title': getTitle(htmlcode).replace("\\n", '').replace('        ', ''),

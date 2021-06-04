@@ -8,9 +8,7 @@
 * （进行中）以注释的形式说明每个函数的作用，以及各个模块的工作流程，更好的理解代码，方便debug和定制化功能。
 
 
-
 * 其它优化
-
 
 <h1 align="center">AV Data Capture - CLI</h1>
 
@@ -36,6 +34,7 @@ CLI 版本
 * [VergilGao's Docker部署](https://github.com/VergilGao/docker-avdc)
 
 # 下载
+
 * [Releases](https://github.com/yoshiko2/AV_Data_Capture/releases/latest)
 
 # 申明

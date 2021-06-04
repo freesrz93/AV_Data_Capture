@@ -1,7 +1,6 @@
-import os
-import sys
 import configparser
 import os
+
 
 class Config:
     def __init__(self, path: str = "config.ini"):  # srz 修改：加入自动生成配置文件功能
@@ -93,6 +92,7 @@ class Config:
 
     def transalte_values(self) -> str:
         return self.conf.get("transalte", "values")
+
     def proxy(self):
         try:
             sec = "proxy"
@@ -239,8 +239,6 @@ class Config:
         return conf
 
 
-
-
 class IniProxy():
     """ Proxy Config from .ini
     """
@@ -267,7 +265,8 @@ class IniProxy():
         '''
         if self.address:
             if self.proxytype in self.SUPPORT_PROXY_TYPE:
-                proxies = {"http": self.proxytype + "://" + self.address, "https": self.proxytype + "://" + self.address}
+                proxies = {"http": self.proxytype + "://" + self.address,
+                           "https": self.proxytype + "://" + self.address}
             else:
                 proxies = {"http": "http://" + self.address, "https": "https://" + self.address}
         else:

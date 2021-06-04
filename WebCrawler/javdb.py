@@ -13,6 +13,7 @@ def getTitle(a):
     browser_title = str(html.xpath("/html/head/title/text()")[0])
     return browser_title[:browser_title.find(' | JavDB')].strip()
 
+
 def getActor(a):
     html = etree.fromstring(a, etree.HTMLParser())
     actors = html.xpath('//span[@class="value"]/a[contains(@href,"/actors/")]/text()')
@@ -20,16 +21,17 @@ def getActor(a):
     r = []
     idx = 0
     actor_gendor = config.Config().actor_gender()
-    if not actor_gendor in ['female','male','both','all']:
+    if not actor_gendor in ['female', 'male', 'both', 'all']:
         actor_gendor = 'female'
     for act in actors:
-        if((actor_gendor == 'all')
-        or (actor_gendor == 'both' and genders[idx] in ['symbol female', 'symbol male'])
-        or (actor_gendor == 'female' and genders[idx] == 'symbol female')
-        or (actor_gendor == 'male' and genders[idx] == 'symbol male')):
+        if ((actor_gendor == 'all')
+                or (actor_gendor == 'both' and genders[idx] in ['symbol female', 'symbol male'])
+                or (actor_gendor == 'female' and genders[idx] == 'symbol female')
+                or (actor_gendor == 'male' and genders[idx] == 'symbol male')):
             r.append(act)
         idx = idx + 1
     return r
+
 
 def getaphoto(url):
     html_page = get_html(url)
@@ -51,12 +53,13 @@ def getActorPhoto(html):  # //*[@id="star_qdt"]/li/a/img
         actor = actor_prether.findall(actoralls)
         actor_photo = {}
         for i in actor:
-            actor_photo[i[1]] = getaphoto('https://' + javdb_site + '.com'+i[0])
+            actor_photo[i[1]] = getaphoto('https://' + javdb_site + '.com' + i[0])
 
         return actor_photo
 
     else:
         return {}
+
 
 def getStudio(a):
     # html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
@@ -70,6 +73,7 @@ def getStudio(a):
     else:
         result = ""
     return result
+
 
 def getRuntime(a):
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
@@ -206,13 +210,17 @@ def getDirector(a):
     result1 = str(html.xpath('//strong[contains(text(),"導演")]/../span/text()')).strip(" ['']")
     result2 = str(html.xpath('//strong[contains(text(),"導演")]/../span/a/text()')).strip(" ['']")
     return str(result1 + result2).strip('+').replace("', '", '').replace('"', '')
-def getOutline(number):  #获取剧情介绍
+
+
+def getOutline(number):  # 获取剧情介绍
     try:
         response = json.loads(airav.main(number))
         result = response['outline']
         return result
     except:
         return ''
+
+
 def getSeries(a):
     # /html/body/section/div/div[3]/div[2]/nav/div[7]/span/a
     html = etree.fromstring(a, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
@@ -220,7 +228,9 @@ def getSeries(a):
     result2 = str(html.xpath('//strong[contains(text(),"系列")]/../span/a/text()')).strip(" ['']")
     return str(result1 + result2).strip('+').replace("', '", '').replace('"', '')
 
+
 javdb_site = "javdb9"
+
 
 def main(number):
     try:
@@ -254,7 +264,7 @@ def main(number):
         if re.search(r'[a-zA-Z]+\.\d{2}\.\d{2}\.\d{2}', number):
             correct_url = urls[0]
         else:
-            ids =html.xpath('//*[@id="videos"]/div/div/a/div[contains(@class, "uid")]/text()')
+            ids = html.xpath('//*[@id="videos"]/div/div/a/div[contains(@class, "uid")]/text()')
             try:
                 correct_url = urls[ids.index(number)]
             except:
