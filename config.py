@@ -209,7 +209,7 @@ class Config:
         # conf.set(sec8, "appid", "")
         conf.set(sec8, "key", "")
         conf.set(sec8, "delay", "1")
-        conf.set(sec8, "values", "title,outline")
+        conf.set(sec8, "values", "outline")
 
         sec9 = "trailer"
         conf.add_section(sec9)

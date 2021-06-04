@@ -117,3 +117,4 @@ venv.bak/
 # success/failed folder
 JAV_output/**/*
 failed/*
+/config.ini
