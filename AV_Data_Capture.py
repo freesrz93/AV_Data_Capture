@@ -9,7 +9,8 @@ import time
 import urllib3
 
 import config
-from ADC_function import get_html
+import time
+from ADC_function import get_html, is_link
 from core import core_main
 from number_parser import get_number
 
@@ -45,7 +46,6 @@ def argparse_function(ver: str) -> [str, str, bool]:
 
     return args.file, args.path, args.number, args.autoexit
 
-
 def movie_lists(root, escape_folder):
     if os.path.basename(root) in escape_folder:
         return []
@@ -57,7 +57,9 @@ def movie_lists(root, escape_folder):
         if os.path.isdir(f):
             total += movie_lists(f, escape_folder)
         elif os.path.splitext(f)[1].upper() in file_type:
-            total.append(os.path.abspath(f))
+            absf = os.path.abspath(f)
+            if conf.main_mode() == 3 or not is_link(absf):
+                total.append(absf)
     return total
 
 
@@ -146,8 +148,8 @@ def create_data_and_move_with_custom_number(file_path: str, c: config.Config, cu
 
 
 if __name__ == '__main__':
-    version = '4.6.6'
-    urllib3.disable_warnings()  # Ignore http proxy warning
+    version = '4.6.7'
+    urllib3.disable_warnings() #Ignore http proxy warning
     # Parse command line args
     single_file_path, folder_path, custom_number, auto_exit = argparse_function(version)
 

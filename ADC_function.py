@@ -1,3 +1,9 @@
+import requests
+import hashlib
+import pathlib
+import random
+import os.path
+import uuid
 import json
 import pathlib
 import re
@@ -9,6 +15,7 @@ from lxml import etree
 from zhconv import convert
 
 import config
+from urllib.parse import urljoin
 from dict_gen import dict_gen
 
 
@@ -31,6 +38,8 @@ def getXpathSingle(htmlcode, xpath):
     return result1
 
 
+G_USER_AGENT = r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
+
 # 网页请求核心
 def get_html(url, cookies: dict = None, ua: str = None, return_type: str = None):
     verify = config.Config().cacert_file()
@@ -38,8 +47,7 @@ def get_html(url, cookies: dict = None, ua: str = None, return_type: str = None)
     errors = ""
 
     if ua is None:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36"}  # noqa
+        headers = {"User-Agent": G_USER_AGENT}  # noqa
     else:
         headers = {"User-Agent": ua}
 
@@ -74,8 +82,7 @@ def get_html(url, cookies: dict = None, ua: str = None, return_type: str = None)
 def post_html(url: str, query: dict, headers: dict = None) -> requests.Response:
     configProxy = config.Config().proxy()
     errors = ""
-    headers_ua = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36"}
+    headers_ua = {"User-Agent": G_USER_AGENT}
     if headers is None:
         headers = headers_ua
     else:
@@ -272,7 +279,16 @@ def file_modification_days(filename) -> int:
         return 9999
     return days
 
+# 检查文件是否是链接
+def is_link(filename: str):
+    if os.path.islink(filename):
+        return True # symlink
+    elif os.stat(filename).st_nlink > 1:
+        return True # hard link Linux MAC OSX Windows NTFS
+    return False
 
-if __name__ == '__main__':
-    res = translateTag_to_sc('fall')
-    print(res)
+# URL相对路径转绝对路径
+def abs_url(base_url: str, href: str) -> str:
+    if href.startswith('http'):
+        return href
+    return urljoin(base_url, href)

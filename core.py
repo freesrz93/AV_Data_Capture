@@ -1,11 +1,15 @@
 import os.path
 import shutil
+import platform
+import errno
+import sys
+
+from PIL import Image
 from io import BytesIO
 from multiprocessing.pool import ThreadPool
 
-from PIL import Image
-
 from ADC_function import *
+
 # =========website========
 from WebCrawler import airav
 from WebCrawler import avsox
@@ -44,7 +48,7 @@ def moveFailedFolder(filepath, failed_folder):
 
 def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON返回元数据
     """
-    iterate through all services and fetch the data 
+    iterate through all services and fetch the data
     """
 
     func_mapping = {
@@ -281,7 +285,7 @@ def get_data_from_json(file_number, filepath, conf: config.Config):  # 从JSON�
     else:
         json_data['extrafanart'] = ''
 
-    naming_rule = ""
+    naming_rule=""
     for i in conf.naming_rule().split("+"):
         if i not in json_data:
             naming_rule += i.strip("'").strip('"')
@@ -599,18 +603,27 @@ def add_mark_thread(pic_path, cn_sub, leak, uncensored, conf):
 
 def add_to_pic(pic_path, img_pic, size, count, mode):
     mark_pic_path = ''
+    pngpath = ''
     if mode == 1:
-        mark_pic_path = BytesIO(
-            get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/SUB.png",
-                     return_type="content"))
+        pngpath = "Img/SUB.png"
     elif mode == 2:
-        mark_pic_path = BytesIO(
-            get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/LEAK.png",
-                     return_type="content"))
+        pngpath = "Img/LEAK.png"
     elif mode == 3:
+        pngpath = "Img/UNCENSORED.png"
+    else:
+        print('[-]Error: watermark image param mode invalid!')
+        return
+    # 先找pyinstaller打包的图片
+    if hasattr(sys, '_MEIPASS') and os.path.isfile(os.path.join(getattr(sys, '_MEIPASS'), pngpath)):
+        mark_pic_path =                            os.path.join(getattr(sys, '_MEIPASS'), pngpath)
+    # 再找py脚本所在路径的图片
+    elif os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), pngpath)):
+        mark_pic_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), pngpath)
+    # 如果没有本地图片才通过网络下载
+    else:
         mark_pic_path = BytesIO(
-            get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/Img/UNCENSORED.png",
-                     return_type="content"))
+            get_html("https://raw.githubusercontent.com/yoshiko2/AV_Data_Capture/master/" + pngpath,
+            return_type="content"))
     img_subt = Image.open(mark_pic_path)
     scroll_high = int(img_pic.height / size)
     scroll_wide = int(scroll_high * img_subt.width / img_subt.height)
@@ -665,6 +678,9 @@ def paste_file_to_folder(filepath, path, number, leak_word, c_word, conf: config
     except PermissionError:
         print('[-]Error! Please run as administrator!')
         return
+    except OSError as oserr:
+        print('[-]OS Error errno ' + oserr.errno)
+        return
 
 
 def paste_file_to_folder_mode2(filepath, path, multi_part, number, part, leak_word, c_word, conf):  # 文件路径，番号，后缀，要移动至的位置
@@ -691,6 +707,9 @@ def paste_file_to_folder_mode2(filepath, path, multi_part, number, part, leak_wo
         return
     except PermissionError:
         print('[-]Error! Please run as administrator!')
+        return
+    except OSError as oserr:
+        print('[-]OS Error errno ' + oserr.errno)
         return
 
 
@@ -763,6 +782,7 @@ def core_main(file_path, number_th, conf: config.Config):
         uncensored = 1
     else:
         uncensored = 0
+
 
     if '流出' in filepath or 'uncensored' in filepath:
         liuchu = '流出'

@@ -15,8 +15,9 @@ def getActorPhoto(htmlcode):  # //*[@id="star_qdt"]/li/a/img
         l = i.a['href']
         t = i.get_text()
         html = etree.fromstring(get_html(l), etree.HTMLParser())
-        p = str(html.xpath('//*[@id="waterfall"]/div[1]/div/div[1]/img/@src')).strip(" ['']")
-        p2 = {t: p}
+        p=abs_url("https://www.javbus.com",
+                  str(html.xpath('//*[@id="waterfall"]/div[1]/div/div[1]/img/@src')).strip(" ['']"))
+        p2={t:p}
         d.update(p2)
     return d
 
@@ -53,12 +54,8 @@ def getYear(htmlcode):  # 获取年份
 def getCover(htmlcode):  # 获取封面链接
     doc = pq(htmlcode)
     image = doc('a.bigImage')
-    if not "javbus.com" in image.attr('href'):
-        return "https://www.javbus.com" + image.attr('href')
-    return image.attr('href')
-
-
-def getRelease(htmlcode):  # 获取出版日期
+    return abs_url("https://www.javbus.com", image.attr('href'))
+def getRelease(htmlcode): #获取出版日期
     html = etree.fromstring(htmlcode, etree.HTMLParser())
     result = str(html.xpath('/html/body/div[5]/div[1]/div[2]/p[2]/text()')).strip(" ['']")
     return result
@@ -222,3 +219,4 @@ def main(number):
 
 if __name__ == "__main__":
     print(main('ipx-292'))
+    print(main('CEMD-011'))
