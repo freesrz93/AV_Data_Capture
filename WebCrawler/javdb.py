@@ -230,18 +230,14 @@ def getSeries(a):
     result2 = str(html.xpath('//strong[contains(text(),"系列")]/../span/a/text()')).strip(" ['']")
     return str(result1 + result2).strip('+').replace("', '", '').replace('"', '')
 
-
-javdb_site = "javdb9"
-
-
 def main(number):
+    javdb_site = random.choice(["javdb9", "javdb30"])
     try:
         # if re.search(r'[a-zA-Z]+\.\d{2}\.\d{2}\.\d{2}', number).group():
         #     pass
         # else:
         #     number = number.upper()
         number = number.upper()
-        isFC2PPV = bool(re.search(r'^FC2-\d+', number))
         cookie_json = './' + javdb_site + '.json'
         javdb_cookies = None
         # 不加载过期的cookie，javdb登录界面显示为7天免登录，故假定cookie有效期为7天
@@ -256,7 +252,7 @@ def main(number):
             javdb_url = 'https://' + javdb_site + '.com/search?q=' + number + '&f=all'
             query_result = get_html(javdb_url, cookies=javdb_cookies)
         except:
-            query_result = get_html('https://javdb9.com/search?q=' + number + '&f=all')
+            query_result = get_html('https://javdb.com/search?q=' + number + '&f=all')
         html = etree.fromstring(query_result, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
         # javdb sometime returns multiple results,
         # and the first elememt maybe not the one we are looking for
@@ -270,10 +266,9 @@ def main(number):
             try:
                 correct_url = urls[ids.index(number)]
             except:
-                # 为避免获得错误番号，FC2 PPV 只要精确对应的结果
-                if isFC2PPV and ids[0] != number:
+                # 为避免获得错误番号，只要精确对应的结果
+                if ids[0].upper() != number:
                     raise ValueError("number not found")
-                # if input number is "STAR438" not "STAR-438", use first search result.
                 correct_url = urls[0]
         try:
             javdb_detail_url = 'https://' + javdb_site + '.com' + correct_url
@@ -298,7 +293,7 @@ def main(number):
             cover_small = getCover(detail_page)
 
         dp_number = getNum(detail_page)
-        if isFC2PPV and dp_number != number:
+        if dp_number.upper() != number:
             raise ValueError("number not found")
         title = getTitle(detail_page)
         if title and dp_number:
@@ -344,5 +339,6 @@ if __name__ == "__main__":
     # print(main('AGAV-042'))
     # print(main('BANK-022'))
     print(main('FC2-735670'))
-    print(main('FC2-1174949'))
+    print(main('FC2-1174949')) # not found
     print(main('MVSD-439'))
+    print(main('EHM0001')) # not found

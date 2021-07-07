@@ -4,6 +4,8 @@ import os
 import re
 import shutil
 import sys
+import shutil
+import typing
 import time
 
 import urllib3
@@ -33,7 +35,7 @@ def check_update(local_version):
         print("[*]======================================================")
 
 
-def argparse_function(ver: str) -> [str, str, bool]:
+def argparse_function(ver: str) -> typing.Tuple[str, str, bool]:
     parser = argparse.ArgumentParser()
     parser.add_argument("file", default='', nargs='?', help="Single Movie file path.")
     parser.add_argument("-p", "--path", default='', nargs='?', help="Analysis folder path.")
@@ -79,8 +81,8 @@ def rm_empty_folder(path):
         return
     for file in files:
         try:
-            os.rmdir(path + '/' + file)  # 删除这个空文件夹
-            print('[+]Deleting empty folder', path + '/' + file)
+            os.rmdir(os.path.join(path, file))  # 删除这个空文件夹
+            print('[+]Deleting empty folder', os.path.join(path, file))
         except:
             pass
 
@@ -114,20 +116,21 @@ def create_data_and_move(file_path: str, c: config.Config, debug):
             if not c.failed_move():
                 if c.soft_link():
                     print("[-]Link {} to failed folder".format(file_path))
-                    os.symlink(file_path, conf.failed_folder() + "/" + file_name)
-            elif c.failed_move():
+                    os.symlink(file_path, os.path.join(conf.failed_folder(), file_name))
+            elif c.failed_move() == True:
                 if c.soft_link():
                     print("[-]Link {} to failed folder".format(file_path))
-                    os.symlink(file_path, conf.failed_folder() + "/" + file_name)
+                    os.symlink(file_path, os.path.join(conf.failed_folder(), file_name))
                 else:
                     try:
                         print("[-]Move [{}] to failed folder".format(file_path))
-                        shutil.move(file_path, conf.failed_folder() + "/")
+                        shutil.move(file_path, os.path.join(conf.failed_folder(), file_name))
                     except Exception as err:
                         print('[!]', err)
 
 
 def create_data_and_move_with_custom_number(file_path: str, c: config.Config, custom_number):
+    file_name = os.path.basename(file_path)
     try:
         print("[!]Making Data for [{}], the number is [{}]".format(file_path, custom_number))
         core_main(file_path, custom_number, c)
@@ -138,17 +141,17 @@ def create_data_and_move_with_custom_number(file_path: str, c: config.Config, cu
 
         if c.soft_link():
             print("[-]Link {} to failed folder".format(file_path))
-            os.symlink(file_path, conf.failed_folder() + "/")
+            os.symlink(file_path, os.path.join(conf.failed_folder(), file_name))
         else:
             try:
                 print("[-]Move [{}] to failed folder".format(file_path))
-                shutil.move(file_path, conf.failed_folder() + "/")
+                shutil.move(file_path, os.path.join(conf.failed_folder(), file_name))
             except Exception as err:
                 print('[!]', err)
 
 
 if __name__ == '__main__':
-    version = '4.6.7'
+    version = '4.6.8'
     urllib3.disable_warnings() #Ignore http proxy warning
     # Parse command line args
     single_file_path, folder_path, custom_number, auto_exit = argparse_function(version)

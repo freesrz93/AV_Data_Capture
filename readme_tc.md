@@ -1,18 +1,4 @@
-### [原始项目](https://github.com/yoshiko2/AV_Data_Capture)
-
-## 主要改动
-
-* 优化翻译。tag 词典被独立为 dict.json 和 dict_gen.py（有一说一之前词典存在 ADC_function.py 里看着是真的血压升高）以后词典更大时考虑完全做成外部 json 或者引入数据库。  
-  机翻 tag 将被存入 dict_MT.json，以供之后人工校对审核。dict.json 和 dict_gen.py 则存储了已确认正确的 tag 翻译，优先级高于机翻。
-
-* （进行中）以注释的形式说明每个函数的作用，以及各个模块的工作流程，更好的理解代码，方便debug和定制化功能。
-
-
-* 其它优化
-
 <h1 align="center">AV Data Capture - CLI</h1>
-
-[繁體中文](https://github.com/yoshiko2/AV_Data_Capture/blob/master/readme_tc.md)
 
 CLI 版本  
 ![](https://img.shields.io/badge/build-passing-brightgreen.svg?style=flat)
@@ -26,52 +12,45 @@ CLI 版本
 ![](https://img.shields.io/badge/Python-3.6-yellow.svg?style=flat&logo=python)
 ![](https://img.shields.io/badge/Pyqt-5-blue.svg?style=flat)<br>
 
-**日本电影元数据 抓取工具 | 刮削器**，配合本地影片管理软件 Emby, Jellyfin, Kodi 等管理本地影片，该软件起到分类与元数据（metadata）抓取作用，利用元数据信息来分类，仅供本地影片分类整理使用。
 
-#### 本地电影刮削与整理一体化解决方案
+**日本電影元數據 抓取工具 | 刮削器**，配合本地影片管理軟體 Emby, Jellyfin, Kodi 等管理本地影片，該軟體起到分類與元數據（metadata）抓取作用，利用元數據信息來分類，僅供本地影片分類整理使用。
+#### 本地電影刮削與整理一體化解決方案
 
-# 文档
-
-* [官方WIKI](https://github.com/yoshiko2/AV_Data_Capture/wiki)
+# 文檔
+* [官方WIKI（不看你怎麽用）](https://github.com/yoshiko2/AV_Data_Capture/wiki)
 * [VergilGao's Docker部署](https://github.com/VergilGao/docker-avdc)
 
-# 下载
-
+# 下載
 * [Releases](https://github.com/yoshiko2/AV_Data_Capture/releases/latest)
 
-# 申明
+#  申明
+當你查閱、下載了本項目源代碼或二進製程序，即代表你接受了以下條款
 
-当你查阅、下载了本项目源代码或二进制程序，即代表你接受了以下条款
-
-* 本软件仅供技术交流，学术交流使用
-* **请勿在热门的社交平台上宣传此项目**
-* 本软件作者编写出该软件旨在学习 Python ，提高编程水平
-* 本软件不提供任何影片下载的线索
-* 用户在使用本软件前，请用户了解并遵守当地法律法规，如果本软件使用过程中存在违反当地法律法规的行为，请勿使用该软件
-* 用户在使用本软件时，若用户在当地产生一切违法行为由用户承担
-* 严禁用户将本软件使用于商业和个人其他意图
-* 源代码和二进制程序请在下载后24小时内删除
-* 出售源码者的母亲会升天
-* 本项目发起者yoshiko2保留最终决定权和最终解释权
-* 若用户不同意上述条款任意一条，请勿使用本软件
-
+* 本軟體僅供技術交流，學術交流使用
+* **請勿在熱門的社交平台上宣傳此項目**
+* 本軟體作者編寫出該軟體旨在學習 Python ，提高編程水平
+* 本軟體不提供任何影片下載的線索
+* 用戶在使用本軟體前，請用戶了解並遵守當地法律法規，如果本軟體使用過程中存在違反當地法律法規的行為，請勿使用該軟件
+* 用戶在使用本軟體時，若用戶在當地產生一切違法行為由用戶承擔
+* 嚴禁用戶將本軟體使用於商業和個人其他意圖
+* 源代碼和二進製程序請在下載後24小時內刪除
+* 出售源碼者的母親會升天
+* 本項目發起者yoshiko2保留最終決定權和最終解釋權
+* 若用戶不同意上述條款任意一條，請勿使用本軟體
 ---
-When you view and download the source code or binary program of this project, it means that you have accepted the
-following terms
+When you view and download the source code or binary program of this project, it means that you have accepted the following terms
 
 * This software is only for technical exchange and academic exchange
 * **Please do not promote this project on popular social platforms**
 * The software author wrote this software to learn Python and improve programming
 * This software does not provide any clues for video download
-* Before using this software, please understand and abide by local laws and regulations. If there is any violation of
-  local laws and regulations during the use of this software, * please do not use this software
+* Before using this software, please understand and abide by local laws and regulations. If there is any violation of local laws and regulations during the use of this software, * please do not use this software  
 * When the user uses this software, if the user has any illegal acts in the local area, the user shall bear
 * It is strictly forbidden for users to use this software for commercial and personal intentions
 * Please delete the source code and binary program within 24 hours after downloading
 * The mother of the source seller will die
 * The author of this software yoshiko2 reserves the right of final decision and final interpretation
 * If the user does not agree with any of the above terms, please do not use this software
-
 ---
 本プロジェクトのソースコード、バイナリファイルをダウンロード、または表示するしたうえで、あなたは本規約に同意したものと見なします。
 * このソフトウェアは、開発技術学習することのみに使用できます。
