@@ -1,2 +1,2 @@
-pyinstaller -F AV_Data_Capture.py -n AV_Data_Capture_srz
+pyinstaller -F AV_Data_Capture.py -n AV_Data_Capture-srz-6.19.2021
 del AV_Data_Capture_srz.spec

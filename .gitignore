@@ -118,3 +118,4 @@ venv.bak/
 JAV_output/**/*
 failed/*
 /config.ini
+/WebCrawler/config.ini

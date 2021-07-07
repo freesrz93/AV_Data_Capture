@@ -163,8 +163,8 @@ if __name__ == '__main__':
     # Read config.ini
     conf = config.Config("config.ini")
 
-    if conf.update_check():
-        check_update(version)
+    # if conf.update_check():
+        # check_update(version)
 
     if conf.debug():
         print('[+]Enable debug')
